@@ -1,0 +1,73 @@
+name: Backup content
+
+# Pull live site content into the private repo so we can redeploy quickly.
+# - Updates data/content.json (seed used on next Render deploy)
+# - Keeps dated copies under backups/
+# Runs every 15 minutes + manual trigger
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Fetch live content
+        id: fetch
+        env:
+          RENDER_URL: ${{ vars.RENDER_URL }}
+        run: |
+          set -euo pipefail
+          URL="${RENDER_URL:-https://promo-landing.onrender.com}"
+          URL="${URL%/}"
+          echo "Fetching $URL/api/content"
+          code=$(curl -sS -o /tmp/content.json -w "%{http_code}" --max-time 90 "$URL/api/content" || true)
+          echo "http=$code"
+          if [ "$code" != "200" ]; then
+            echo "Live site unreachable (HTTP $code). Keep existing backups."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          python3 - <<'PY'
+          import json, pathlib, sys
+          p = pathlib.Path("/tmp/content.json")
+          data = json.loads(p.read_text(encoding="utf-8"))
+          if not isinstance(data, dict) or "posts" not in data:
+              print("invalid content payload", file=sys.stderr)
+              sys.exit(1)
+          p.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+          print("posts", len(data.get("posts") or []))
+          PY
+
+          mkdir -p backups data
+          if [ -f data/content.json ] && cmp -s /tmp/content.json data/content.json; then
+            echo "No content change."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          stamp=$(date -u +%Y%m%d-%H%M%S)
+          cp /tmp/content.json data/content.json
+          cp /tmp/content.json backups/content-latest.json
+          cp /tmp/content.json "backups/content-${stamp}.json"
+          ls -1t backups/content-2*.json 2>/dev/null | tail -n +41 | xargs -r rm -f
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Commit backup
+        if: steps.fetch.outputs.changed == 'true'
+        run: |
+          git config user.name "backup-bot"
+          git config user.email "backup-bot@users.noreply.github.com"
+          git add data/content.json backups/
+          git commit -m "backup: sync live content $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push

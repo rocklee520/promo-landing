@@ -169,6 +169,16 @@
     toast(idx >= 0 ? "已更新到列表，记得点保存" : "已加入列表，记得点保存");
   }
 
+  function downloadBackup(payload, filename) {
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
   async function saveAll() {
     readSiteForm();
     const res = await fetch("/api/content", {
@@ -184,19 +194,15 @@
     data = body.content || data;
     password = data.site.adminPassword;
     sessionStorage.setItem(AUTH_KEY, password);
-    toast("已保存");
+    const stamp = new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19);
+    downloadBackup(data, `content-backup-${stamp}.json`);
+    toast("已保存，并已下载本地备份");
     renderList();
   }
 
   function exportJson() {
     readSiteForm();
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "content.json";
-    a.click();
-    URL.revokeObjectURL(url);
+    downloadBackup(data, "content.json");
   }
 
   async function tryLogin() {
