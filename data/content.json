@@ -9,6 +9,7 @@
     "全部",
     "直播系列",
     "网红系列",
+    "机构系列",
     "最新",
     "热门"
   ],
@@ -16,6 +17,7 @@
     "全部",
     "直播系列",
     "网红系列",
+    "机构系列",
     "最新",
     "热门",
     "视频",
@@ -23,8 +25,34 @@
   ],
   "posts": [
     {
+      "id": "pansihuayuan-jg3",
+      "title": "JG3.pans花园系列47G",
+      "subtitle": "国人之光，珍稀无马",
+      "cover": "/assets/pansihuayuan/01.jpg",
+      "summary": "国人之光，珍稀无马",
+      "downloadNote": "本资源支持 百度盘 下载",
+      "updates": "",
+      "link": "",
+      "gallery": [
+        "/assets/pansihuayuan/01.jpg"
+      ],
+      "tags": [
+        "机构系列",
+        "机构",
+        "盘丝花园",
+        "热门"
+      ],
+      "series": "机构系列",
+      "views": 0,
+      "date": "2026-08-08",
+      "featured": true,
+      "hot": true,
+      "price": "15",
+      "updatedAt": "2026-08-08T14:19:35.890Z"
+    },
+    {
       "id": "suchang-wh4",
-      "title": "WH4.苏畅147G",
+      "title": "WH4.苏畅169G",
       "subtitle": "国人之光，超清4K无马",
       "cover": "/assets/suchang/01.jpg",
       "summary": "国人之光，超清4K无马",
@@ -47,12 +75,12 @@
         "热门"
       ],
       "series": "网红系列",
-      "views": 1,
+      "views": 3,
       "date": "2026-08-08",
       "featured": true,
       "hot": true,
       "price": "15",
-      "updatedAt": "2026-08-08T04:50:53.570Z"
+      "updatedAt": "2026-08-08T14:11:57.545Z"
     },
     {
       "id": "kunkungou-001",
@@ -287,7 +315,7 @@
         "热门"
       ],
       "series": "直播系列",
-      "views": 8,
+      "views": 9,
       "date": "2026-07-24",
       "featured": true,
       "hot": true,
