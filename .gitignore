@@ -3,6 +3,7 @@ __pycache__/
 *.pyc
 data/content.json.tmp
 data/content.live.json
+data/_live_snapshot.json
 data/views.json
 data/views.json.tmp
 .venv/
