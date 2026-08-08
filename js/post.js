@@ -25,8 +25,9 @@
       <div class="note-inline-title">${titleWithPriceHtml(p)}</div>
       ${p.subtitle ? `<h1 class="note-h1">${escapeHtml(p.subtitle)}</h1>` : ""}
       <h1 class="note-h1">内容简介</h1>
-      <p class="note-p"><strong>${escapeHtml(p.summary || "")}</strong></p>
+      <p class="note-p"><strong>${escapeHtml(p.summary || "").replace(/\n/g, "<br>")}</strong></p>
       ${p.downloadNote ? `<p class="note-p note-download-note">${escapeHtml(p.downloadNote)}</p>` : ""}
+      ${p.updates ? `<p class="note-p">${escapeHtml(p.updates).replace(/\n/g, "<br>")}</p>` : ""}
       ${linkBlock}
       <div class="note-gallery">
         ${gallery
