@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>管理后台 · 更新速递</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body class="admin-body">
+  <div class="admin-shell">
+    <div class="admin-card" id="loginCard">
+      <h1>管理后台</h1>
+      <p class="muted">默认密码：admin123（可在站点设置里修改）</p>
+      <div class="admin-grid">
+        <label>
+          密码
+          <input id="passwordInput" type="password" placeholder="输入管理密码" />
+        </label>
+      </div>
+      <div class="admin-actions">
+        <button class="btn btn-primary" id="loginBtn">登录</button>
+        <a class="btn" href="/">回前台</a>
+      </div>
+    </div>
+
+    <div id="editor" hidden>
+      <div class="admin-card">
+        <h1>站点设置</h1>
+        <div class="admin-grid">
+          <div class="row-2">
+            <label>站点名称<input id="cfgName" /></label>
+            <label>副标题<input id="cfgSub" /></label>
+          </div>
+          <label>页脚文案<input id="cfgFooter" /></label>
+          <label>管理密码（保存后生效）<input id="cfgPassword" type="text" /></label>
+          <label>标签（逗号分隔）<input id="cfgTags" placeholder="全部,最新,热门,视频,图片" /></label>
+        </div>
+        <div class="admin-actions">
+          <button class="btn btn-primary" id="saveAllBtn">保存全部到服务器</button>
+          <button class="btn" id="exportBtn">导出 JSON 备份</button>
+          <label class="btn" style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;">
+            导入 JSON
+            <input id="importInput" type="file" accept="application/json,.json" hidden />
+          </label>
+          <a class="btn" href="/" target="_blank">打开前台</a>
+          <button class="btn" id="logoutBtn">退出登录</button>
+        </div>
+        <p class="muted" id="saveHint" style="margin-top:10px;"></p>
+      </div>
+
+      <div class="admin-card">
+        <h2>新增 / 编辑内容</h2>
+        <div class="admin-grid">
+          <input id="editId" type="hidden" />
+          <label>标题<input id="editTitle" placeholder="098.小野猫 kiki酱" /></label>
+          <label>副标题（详情页大标题）<input id="editSubtitle" placeholder="合集标题…" /></label>
+          <label>封面图链接（URL）<input id="editCover" placeholder="/assets/... 或 https://..." /></label>
+          <label>介绍<textarea id="editSummary" placeholder="内容简介"></textarea></label>
+          <label>下载说明<input id="editDownloadNote" placeholder="**本资源支持百度网盘 下载" /></label>
+          <label>跳转 / 下载链接<input id="editLink" placeholder="https://..." /></label>
+          <label>图集（每行一个图片 URL）<textarea id="editGallery" placeholder="/assets/kiki/01.jpeg"></textarea></label>
+          <div class="row-2">
+            <label>系列页签
+              <select id="editSeries">
+                <option value="">无</option>
+                <option value="直播系列">直播系列</option>
+              </select>
+            </label>
+            <label>标签（逗号分隔）<input id="editTags" placeholder="直播系列,直播,kiki酱" /></label>
+          </div>
+          <div class="row-2">
+            <label>日期<input id="editDate" type="date" /></label>
+            <label>浏览数<input id="editViews" type="number" min="0" value="0" /></label>
+          </div>
+          <label>
+            标记
+            <select id="editFlags">
+              <option value="none">普通</option>
+              <option value="featured">仅轮播</option>
+              <option value="hot">仅热门</option>
+              <option value="both">轮播 + 热门</option>
+            </select>
+          </label>
+        </div>
+        <div class="admin-actions">
+          <button class="btn btn-primary" id="upsertBtn">写入列表</button>
+          <button class="btn" id="resetFormBtn">清空表单</button>
+        </div>
+      </div>
+
+      <div class="admin-card">
+        <h2>内容列表</h2>
+        <div id="adminList"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <script src="/js/admin.js"></script>
+</body>
+</html>

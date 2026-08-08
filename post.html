@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>详情</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body class="note-body">
+  <header class="topbar">
+    <div class="wrap topbar-inner">
+      <a class="brand" href="/">
+        <div class="brand-name" id="siteName">更新速递</div>
+        <div class="brand-sub" id="siteSub"></div>
+      </a>
+      <nav class="main-nav" id="mainNav"></nav>
+      <form class="search-form" id="searchForm" action="/search.html" method="get">
+        <input type="search" name="keyword" placeholder="搜索资源..." autocomplete="off" />
+        <button type="submit">搜索</button>
+      </form>
+      <div class="top-actions">
+        <a class="btn" href="/">返回首页</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="note-shell">
+    <article class="note-card" id="noteArticle">
+      <div class="empty">加载中...</div>
+    </article>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap" id="siteFooter"></div>
+  </footer>
+
+  <script src="/js/common.js"></script>
+  <script src="/js/post.js"></script>
+</body>
+</html>

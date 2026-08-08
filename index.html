@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>更新速递</title>
+  <meta name="description" content="最新视频 / 图片预览与介绍" />
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="wrap topbar-inner">
+      <a class="brand" href="/">
+        <div class="brand-name" id="siteName">更新速递</div>
+        <div class="brand-sub" id="siteSub">最新视频 / 图片预览与介绍</div>
+      </a>
+      <nav class="main-nav" id="mainNav"></nav>
+      <form class="search-form" id="searchForm" action="/search.html" method="get">
+        <input type="search" name="keyword" placeholder="搜索资源..." autocomplete="off" />
+        <button type="submit" aria-label="搜索">搜索</button>
+      </form>
+      <div class="top-actions">
+        <a class="btn" href="/admin.html">管理后台</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="wrap">
+        <div class="carousel" id="carousel">
+          <div class="carousel-track" id="carouselTrack"></div>
+          <div class="carousel-dots" id="carouselDots"></div>
+        </div>
+        <div class="tags" id="tagBar"></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap">
+        <div class="section-head">
+          <h3>热门排行</h3>
+          <div class="tabs" id="rankTabs">
+            <button class="tab active" data-rank="hot">热门推荐</button>
+            <button class="tab" data-rank="views">最多浏览</button>
+            <button class="tab" data-rank="newest">最新上传</button>
+          </div>
+        </div>
+        <div class="rank-list" id="rankList"></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap">
+        <div class="section-head">
+          <h3 id="allTitle">全部内容</h3>
+          <div class="tabs" id="sortTabs">
+            <button class="tab active" data-sort="newest">最新</button>
+            <button class="tab" data-sort="oldest">最旧</button>
+            <button class="tab" data-sort="views">浏览最多</button>
+          </div>
+        </div>
+        <div class="post-list" id="postList"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap" id="siteFooter">内容由站长更新维护</div>
+  </footer>
+
+  <script src="/js/common.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>
