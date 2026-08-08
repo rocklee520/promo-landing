@@ -2,6 +2,7 @@
   const {
     escapeHtml,
     escapeAttr,
+    titleWithPriceHtml,
     loadContent,
     searchPosts,
     postHref,
@@ -49,7 +50,7 @@
         <a class="search-card" href="${escapeAttr(postHref(p))}" target="${postTarget(p)}" rel="noopener noreferrer">
           <div class="search-cover"><img src="${escapeAttr(p.cover || "")}" alt="" loading="lazy" /></div>
           <div class="search-card-body">
-            <h3>${escapeHtml(p.title || "")}</h3>
+            <h3>${titleWithPriceHtml(p)}</h3>
             <p>${escapeHtml(p.subtitle || p.summary || "")}</p>
             <div class="post-foot">
               <span>${escapeHtml(p.date || "")}</span>

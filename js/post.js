@@ -2,6 +2,7 @@
   const {
     escapeHtml,
     escapeAttr,
+    titleWithPriceHtml,
     loadContent,
     trackView,
     bindSearchForm,
@@ -21,7 +22,7 @@
       : "";
 
     root.innerHTML = `
-      <div class="note-inline-title">${escapeHtml(p.title || "")}</div>
+      <div class="note-inline-title">${titleWithPriceHtml(p)}</div>
       ${p.subtitle ? `<h1 class="note-h1">${escapeHtml(p.subtitle)}</h1>` : ""}
       <h1 class="note-h1">内容简介</h1>
       <p class="note-p"><strong>${escapeHtml(p.summary || "")}</strong></p>

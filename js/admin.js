@@ -57,7 +57,7 @@
         <div class="admin-post" data-id="${escapeAttr(p.id)}">
           <img src="${escapeAttr(p.cover || "")}" alt="" />
           <div>
-            <h4>${escapeHtml(p.title || "未命名")}</h4>
+            <h4>${escapeHtml(p.title || "未命名")}${p.price ? ` <span class="price-tag">${escapeHtml(String(p.price).includes("元") ? p.price : p.price + "元")}</span>` : ""}</h4>
             <p>${escapeHtml((p.tags || []).join(" / "))} · ${escapeHtml(p.date || "")} · ${Number(p.views || 0)} 浏览</p>
           </div>
           <div class="admin-actions">
@@ -103,6 +103,7 @@
   function fillForm(p) {
     $("editId").value = p.id || "";
     $("editTitle").value = p.title || "";
+    $("editPrice").value = p.price || "";
     $("editSubtitle").value = p.subtitle || "";
     $("editCover").value = p.cover || "";
     $("editSummary").value = p.summary || "";
@@ -119,6 +120,7 @@
   function resetForm() {
     $("editId").value = "";
     $("editTitle").value = "";
+    $("editPrice").value = "";
     $("editSubtitle").value = "";
     $("editCover").value = "";
     $("editSummary").value = "";
@@ -148,6 +150,7 @@
       ...existing,
       id,
       title,
+      price: $("editPrice").value.trim(),
       subtitle: $("editSubtitle").value.trim(),
       cover: $("editCover").value.trim(),
       summary: $("editSummary").value.trim(),
@@ -163,6 +166,7 @@
       views: Number($("editViews").value || 0),
       featured: flags.featured,
       hot: flags.hot,
+      updatedAt: new Date().toISOString(),
     };
     const idx = data.posts.findIndex((p) => p.id === id);
     if (idx >= 0) data.posts[idx] = item;

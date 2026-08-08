@@ -11,6 +11,20 @@ window.Promo = (() => {
     return escapeHtml(str).replaceAll("'", "&#39;");
   }
 
+  function formatPrice(price) {
+    const s = String(price ?? "").trim();
+    if (!s) return "";
+    return /元|￥|\$|¥/.test(s) ? s : `${s}元`;
+  }
+
+  /** Safe HTML: title + optional price badge */
+  function titleWithPriceHtml(p) {
+    const title = escapeHtml(p?.title || "");
+    const price = formatPrice(p?.price);
+    if (!price) return title;
+    return `${title} <span class="price-tag">${escapeHtml(price)}</span>`;
+  }
+
   async function loadContent() {
     const res = await fetch(`/api/content?ts=${Date.now()}`, { cache: "no-store" });
     if (!res.ok) throw new Error("无法加载内容");
@@ -67,6 +81,7 @@ window.Promo = (() => {
         p.title,
         p.subtitle,
         p.summary,
+        p.price,
         p.downloadNote,
         ...(p.tags || []),
         p.series,
@@ -122,6 +137,8 @@ window.Promo = (() => {
   return {
     escapeHtml,
     escapeAttr,
+    formatPrice,
+    titleWithPriceHtml,
     loadContent,
     trackView,
     postHref,

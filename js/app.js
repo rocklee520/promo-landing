@@ -2,6 +2,7 @@
   const {
     escapeHtml,
     escapeAttr,
+    titleWithPriceHtml,
     loadContent,
     postHref,
     postTarget,
@@ -86,7 +87,7 @@
         (p) => `
         <a class="carousel-slide" href="${escapeAttr(postHref(p))}" target="${postTarget(p)}" rel="noopener noreferrer">
           <img src="${escapeAttr(p.cover || "")}" alt="${escapeAttr(p.title || "")}" loading="lazy" />
-          <div class="carousel-caption"><h2>${escapeHtml(p.title || "")}</h2></div>
+          <div class="carousel-caption"><h2>${titleWithPriceHtml(p)}</h2></div>
         </a>`
       )
       .join("");
@@ -138,7 +139,7 @@
           <div class="rank-no">${String(i + 1).padStart(2, "0")}</div>
           <img src="${escapeAttr(p.cover || "")}" alt="" loading="lazy" />
           <div class="rank-meta">
-            <h4>${escapeHtml(p.title || "")}</h4>
+            <h4>${titleWithPriceHtml(p)}</h4>
             <p>${escapeHtml((p.tags || []).slice(0, 2).join(" · ") || "未分类")} · ${Number(p.views || 0)} 浏览</p>
           </div>
         </a>`
@@ -180,7 +181,7 @@
           <div class="post-cover"><img src="${escapeAttr(p.cover || "")}" alt="" loading="lazy" /></div>
           <div class="post-body">
             <div class="post-tags">${(p.tags || []).map((t) => `<span class="pill">${escapeHtml(t)}</span>`).join("")}</div>
-            <h3>${escapeHtml(p.title || "")}</h3>
+            <h3>${titleWithPriceHtml(p)}</h3>
             <p class="post-summary">${escapeHtml(p.subtitle || p.summary || "")}</p>
             <div class="post-foot"><span>${escapeHtml(p.date || "")}</span><span>${Number(p.views || 0)} 浏览</span></div>
           </div>

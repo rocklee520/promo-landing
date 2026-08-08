@@ -53,8 +53,7 @@
       "views": 2,
       "date": "2026-07-12",
       "featured": true,
-      "hot": true,
-      "price": ""
+      "hot": true
     },
     {
       "id": "kiki-098",
@@ -94,8 +93,7 @@
       "views": 2,
       "date": "2026-07-24",
       "featured": true,
-      "hot": true,
-      "price": "30元"
+      "hot": true
     }
   ]
 }

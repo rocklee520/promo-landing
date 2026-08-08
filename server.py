@@ -181,6 +181,46 @@ def merge_remote_views(local_content: dict, remote: dict) -> dict:
     return local_content
 
 
+def _post_updated_at(post: dict) -> str:
+    return str(post.get("updatedAt") or post.get("date") or "")
+
+
+def merge_posts_by_id(primary: dict, secondary: dict) -> dict:
+    """Merge posts by id. Newer updatedAt wins field values; views always take max."""
+    merged = json.loads(json.dumps(primary))
+    by_id: dict[str, dict] = {}
+    order: list[str] = []
+    for source in (merged.get("posts") or []) + (secondary.get("posts") or []):
+        if not isinstance(source, dict) or not source.get("id"):
+            continue
+        pid = str(source["id"])
+        if pid not in by_id:
+            by_id[pid] = json.loads(json.dumps(source))
+            order.append(pid)
+            continue
+        cur = by_id[pid]
+        views = max(int(cur.get("views") or 0), int(source.get("views") or 0))
+        if _post_updated_at(source) >= _post_updated_at(cur):
+            keep = json.loads(json.dumps(source))
+            # don't let empty price/title wipe non-empty if accidental
+            for key in ("title", "price", "subtitle", "summary", "cover", "link", "downloadNote"):
+                if not str(keep.get(key) or "").strip() and str(cur.get(key) or "").strip():
+                    keep[key] = cur.get(key)
+            if not keep.get("gallery") and cur.get("gallery"):
+                keep["gallery"] = cur.get("gallery")
+            keep["views"] = views
+            by_id[pid] = keep
+        else:
+            cur["views"] = views
+    merged["posts"] = [by_id[pid] for pid in order if pid in by_id]
+    # Prefer secondary site/nav/tags only when primary missing pieces
+    if secondary.get("nav") and not merged.get("nav"):
+        merged["nav"] = secondary.get("nav")
+    if secondary.get("tags") and not merged.get("tags"):
+        merged["tags"] = secondary.get("tags")
+    return merged
+
+
 def restore_from_github() -> bool:
     """On boot: pull latest content/views from GitHub so redeploys don't reset counters."""
     remote = read_content_from_github()
@@ -188,19 +228,26 @@ def restore_from_github() -> bool:
         return False
     with CONTENT_LOCK:
         local = _read_json(CONTENT_PATH) if CONTENT_PATH.exists() else {"posts": []}
-        # Start from remote (source of truth across deploys), then max-merge local leftovers
-        merged = json.loads(json.dumps(remote))
+        # Remote (GitHub backup of admin edits) wins when newer; never drop local-only posts
+        merged = merge_posts_by_id(remote, local)
         merged = merge_remote_views(merged, local)
         views = {
             str(p.get("id")): int(p.get("views") or 0)
             for p in (merged.get("posts") or [])
             if isinstance(p, dict) and p.get("id")
         }
-        # Preserve local admin password if remote blank
         local_pwd = ((local.get("site") or {}).get("adminPassword") or "").strip()
         remote_pwd = ((merged.get("site") or {}).get("adminPassword") or "").strip()
         if local_pwd and not remote_pwd:
             merged.setdefault("site", {})["adminPassword"] = local_pwd
+        if remote.get("site"):
+            merged["site"] = {**(merged.get("site") or {}), **(remote.get("site") or {})}
+            if local_pwd and not ((remote.get("site") or {}).get("adminPassword") or "").strip():
+                merged["site"]["adminPassword"] = local_pwd
+        if remote.get("nav"):
+            merged["nav"] = remote["nav"]
+        if remote.get("tags"):
+            merged["tags"] = remote["tags"]
         write_content_local(merged)
         write_views(views)
     return True

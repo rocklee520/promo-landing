@@ -5,8 +5,22 @@
     "footer": "内容由站长更新维护 · 点击条目查看详情",
     "adminPassword": ""
   },
-  "nav": ["全部", "直播系列", "网红系列", "最新", "热门"],
-  "tags": ["全部", "直播系列", "网红系列", "最新", "热门", "视频", "图片"],
+  "nav": [
+    "全部",
+    "直播系列",
+    "网红系列",
+    "最新",
+    "热门"
+  ],
+  "tags": [
+    "全部",
+    "直播系列",
+    "网红系列",
+    "最新",
+    "热门",
+    "视频",
+    "图片"
+  ],
   "posts": [
     {
       "id": "tuzaibaby-102",
@@ -29,12 +43,19 @@
         "/assets/tuzaibaby/10.jpeg",
         "/assets/tuzaibaby/11.jpeg"
       ],
-      "tags": ["网红系列", "网红", "tuzaibaby", "热门"],
+      "tags": [
+        "网红系列",
+        "网红",
+        "tuzaibaby",
+        "热门"
+      ],
       "series": "网红系列",
-      "views": 0,
+      "views": 2,
       "date": "2026-07-12",
       "featured": true,
-      "hot": true
+      "hot": true,
+      "price": "",
+      "updatedAt": "2026-08-08T01:45:00Z"
     },
     {
       "id": "kiki-098",
@@ -64,12 +85,19 @@
         "/assets/kiki/17.png",
         "/assets/kiki/18.png"
       ],
-      "tags": ["直播系列", "直播", "kiki酱", "热门"],
+      "tags": [
+        "直播系列",
+        "直播",
+        "kiki酱",
+        "热门"
+      ],
       "series": "直播系列",
-      "views": 1,
+      "views": 2,
       "date": "2026-07-24",
       "featured": true,
-      "hot": true
+      "hot": true,
+      "price": "",
+      "updatedAt": "2026-08-08T01:45:00Z"
     }
   ]
 }

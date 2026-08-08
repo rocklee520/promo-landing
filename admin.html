@@ -46,14 +46,17 @@
           <button class="btn" id="logoutBtn">退出登录</button>
         </div>
         <p class="muted" id="saveHint" style="margin-top:10px;"></p>
-        <p class="muted" style="margin-top:6px;">备份：每次保存会自动下载一份 JSON；云端每 15 分钟同步到私有 GitHub。网站挂了可双击「快速恢复.bat」。</p>
+        <p class="muted" style="margin-top:6px;">备份：每次保存会自动下载 JSON，并约每 5 分钟同步到 GitHub。改完务必点「保存全部到服务器」。重新部署前会优先保留你后台改过的内容。</p>
       </div>
 
       <div class="admin-card">
         <h2>新增 / 编辑内容</h2>
         <div class="admin-grid">
           <input id="editId" type="hidden" />
-          <label>标题<input id="editTitle" placeholder="098.小野猫 kiki酱" /></label>
+          <div class="row-2">
+            <label>标题<input id="editTitle" placeholder="098.小野猫 kiki酱" /></label>
+            <label>价格（显示在标题旁）<input id="editPrice" placeholder="30 或 30元" /></label>
+          </div>
           <label>副标题（详情页大标题）<input id="editSubtitle" placeholder="合集标题…" /></label>
           <label>封面图链接（URL）<input id="editCover" placeholder="/assets/... 或 https://..." /></label>
           <label>介绍<textarea id="editSummary" placeholder="内容简介"></textarea></label>
