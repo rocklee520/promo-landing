@@ -7,6 +7,14 @@
 双击 `启动.bat`，打开 http://127.0.0.1:8787/  
 后台：http://127.0.0.1:8787/admin.html
 
+## Render 部署注意
+
+若提示无法访问 GitHub 仓库：把仓库设为 Public，或给 Render GitHub App 勾选该仓库后重连。
+
+生产环境请在 Render → Environment 设置：
+
+- `ADMIN_PASSWORD` = 你的后台密码（例如 `liy123456780`）
+
 ## 备份（已启用）
 
 1. **后台每次保存**：自动下载一份 `content-backup-*.json` 到你的电脑  

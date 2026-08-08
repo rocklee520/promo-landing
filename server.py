@@ -30,6 +30,8 @@ GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN", "").strip()
 GITHUB_REPO = os.environ.get("GITHUB_REPO", "").strip()  # owner/repo
 GITHUB_CONTENT_PATH = os.environ.get("GITHUB_CONTENT_PATH", "data/content.json").strip()
 GITHUB_BRANCH = os.environ.get("GITHUB_BRANCH", "main").strip()
+# Preferred admin password for production (set in Render Environment)
+ADMIN_PASSWORD_ENV = os.environ.get("ADMIN_PASSWORD", "").strip()
 
 CONTENT_LOCK = threading.RLock()
 # ip+post_id -> last view timestamp (anti-refresh spam, in-memory)
@@ -187,6 +189,22 @@ def read_content(*, with_views: bool = True) -> dict:
         return content
 
 
+def expected_admin_password(content: dict | None = None) -> str:
+    if ADMIN_PASSWORD_ENV:
+        return ADMIN_PASSWORD_ENV
+    content = content if content is not None else read_content(with_views=False)
+    return (content.get("site") or {}).get("adminPassword") or "admin123"
+
+
+def public_content(content: dict) -> dict:
+    """Hide admin password from public API responses."""
+    clone = json.loads(json.dumps(content))
+    site = clone.get("site")
+    if isinstance(site, dict):
+        site["adminPassword"] = ""
+    return clone
+
+
 def write_content_local(data: dict) -> None:
     _write_json(CONTENT_PATH, data)
 
@@ -303,7 +321,7 @@ class Handler(BaseHTTPRequestHandler):
         path = urlparse(self.path).path
         if path == "/api/content":
             try:
-                self._json(200, read_content(with_views=True))
+                self._json(200, public_content(read_content(with_views=True)))
             except Exception as exc:  # noqa: BLE001
                 self._json(500, {"error": str(exc)})
             return
@@ -315,6 +333,7 @@ class Handler(BaseHTTPRequestHandler):
                     "ok": True,
                     "persist": "github" if github_enabled() else "local",
                     "views": True,
+                    "admin_env": bool(ADMIN_PASSWORD_ENV),
                 },
             )
             return
@@ -348,19 +367,28 @@ class Handler(BaseHTTPRequestHandler):
     def do_POST(self) -> None:  # noqa: N802
         parsed = urlparse(self.path)
         path = parsed.path
+        length = int(self.headers.get("Content-Length") or 0)
+        raw = self.rfile.read(length) if length else b"{}"
+        try:
+            payload = json.loads(raw.decode("utf-8") or "{}")
+            if not isinstance(payload, dict):
+                payload = {}
+        except Exception:  # noqa: BLE001
+            payload = {}
+
+        if path == "/api/login":
+            password = str(payload.get("password") or "").strip()
+            if password and password == expected_admin_password():
+                self._json(200, {"ok": True})
+            else:
+                self._json(401, {"error": "密码错误"})
+            return
+
         if path != "/api/view":
             self._json(404, {"error": "not found"})
             return
 
-        length = int(self.headers.get("Content-Length") or 0)
-        raw = self.rfile.read(length) if length else b"{}"
-        post_id = ""
-        try:
-            payload = json.loads(raw.decode("utf-8") or "{}")
-            if isinstance(payload, dict):
-                post_id = str(payload.get("id") or "").strip()
-        except Exception:  # noqa: BLE001
-            payload = {}
+        post_id = str(payload.get("id") or "").strip()
         if not post_id:
             qs = parse_qs(parsed.query)
             post_id = (qs.get("id") or [""])[0].strip()
@@ -407,7 +435,7 @@ class Handler(BaseHTTPRequestHandler):
             return
 
         password = self.headers.get("X-Admin-Password") or ""
-        expected = (current.get("site") or {}).get("adminPassword") or "admin123"
+        expected = expected_admin_password(current)
         if password != expected:
             self._json(401, {"error": "密码错误"})
             return
@@ -416,9 +444,14 @@ class Handler(BaseHTTPRequestHandler):
             self._json(400, {"error": "内容格式不正确"})
             return
 
+        # Keep existing password when client sends blank (redacted) value
+        site = incoming.setdefault("site", {})
+        if isinstance(site, dict) and not str(site.get("adminPassword") or "").strip():
+            site["adminPassword"] = (current.get("site") or {}).get("adminPassword") or expected
+
         try:
             write_content(incoming)
-            self._json(200, {"ok": True, "content": read_content(with_views=True)})
+            self._json(200, {"ok": True, "content": public_content(read_content(with_views=True))})
         except Exception as exc:  # noqa: BLE001
             self._json(500, {"error": str(exc)})
 

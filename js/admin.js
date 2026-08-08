@@ -37,12 +37,13 @@
     $("cfgName").value = data.site.name || "";
     $("cfgSub").value = data.site.subtitle || "";
     $("cfgFooter").value = data.site.footer || "";
-    $("cfgPassword").value = data.site.adminPassword || "";
+    $("cfgPassword").value = "";
+    $("cfgPassword").placeholder = "留空则不修改密码";
     $("cfgTags").value = (data.tags || []).join(",");
     if (!$("editDate").value) $("editDate").value = new Date().toISOString().slice(0, 10);
     renderList();
     $("saveHint").textContent =
-      "保存后会写入 data/content.json，前台刷新即可看到。公网部署后同样通过此后台修改。";
+      "保存后会写入服务器。浏览量会自动累计；密码留空表示不改。";
   }
 
   function renderList() {
@@ -75,7 +76,9 @@
     data.site.name = $("cfgName").value.trim() || "更新速递";
     data.site.subtitle = $("cfgSub").value.trim();
     data.site.footer = $("cfgFooter").value.trim();
-    data.site.adminPassword = $("cfgPassword").value.trim() || data.site.adminPassword || "admin123";
+    const newPwd = $("cfgPassword").value.trim();
+    // Blank means keep server-side password (API redacts it from GET)
+    data.site.adminPassword = newPwd;
     data.tags = $("cfgTags").value
       .split(/[,，]/)
       .map((s) => s.trim())
@@ -181,6 +184,7 @@
 
   async function saveAll() {
     readSiteForm();
+    const newPwd = $("cfgPassword").value.trim();
     const res = await fetch("/api/content", {
       method: "PUT",
       headers: {
@@ -192,8 +196,11 @@
     const body = await res.json().catch(() => ({}));
     if (!res.ok) throw new Error(body.error || "保存失败");
     data = body.content || data;
-    password = data.site.adminPassword;
-    sessionStorage.setItem(AUTH_KEY, password);
+    if (newPwd) {
+      password = newPwd;
+      sessionStorage.setItem(AUTH_KEY, password);
+      $("cfgPassword").value = "";
+    }
     const stamp = new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19);
     downloadBackup(data, `content-backup-${stamp}.json`);
     toast("已保存，并已下载本地备份");
@@ -207,11 +214,21 @@
 
   async function tryLogin() {
     password = $("passwordInput").value.trim();
-    await fetchContent();
-    if (password !== (data.site.adminPassword || "admin123")) {
-      toast("密码错误");
+    if (!password) {
+      toast("请输入密码");
       return;
     }
+    const res = await fetch("/api/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ password }),
+    });
+    const body = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      toast(body.error || "密码错误");
+      return;
+    }
+    await fetchContent();
     sessionStorage.setItem(AUTH_KEY, password);
     showEditor();
   }
@@ -291,10 +308,17 @@
   });
 
   if (password) {
-    fetchContent()
-      .then(() => {
-        if (password === (data.site.adminPassword || "admin123")) showEditor();
-        else sessionStorage.removeItem(AUTH_KEY);
+    fetch("/api/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ password }),
+    })
+      .then((res) => {
+        if (!res.ok) {
+          sessionStorage.removeItem(AUTH_KEY);
+          return null;
+        }
+        return fetchContent().then(() => showEditor());
       })
       .catch(() => {});
   }
