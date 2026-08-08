@@ -25,9 +25,9 @@ VIEWS_PATH = DATA_DIR / "views.json"
 HOST = os.environ.get("HOST", "0.0.0.0")
 PORT = int(os.environ.get("PORT", "8787"))
 
-# Optional: persist content to a GitHub file so free hosts keep edits after restart
+# Persist across Render redeploys via GitHub (public raw read; token optional for write-back)
 GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN", "").strip()
-GITHUB_REPO = os.environ.get("GITHUB_REPO", "").strip()  # owner/repo
+GITHUB_REPO = os.environ.get("GITHUB_REPO", "rocklee520/promo-landing").strip()
 GITHUB_CONTENT_PATH = os.environ.get("GITHUB_CONTENT_PATH", "data/content.json").strip()
 GITHUB_BRANCH = os.environ.get("GITHUB_BRANCH", "main").strip()
 # Preferred admin password for production (set in Render Environment)
@@ -37,6 +37,9 @@ CONTENT_LOCK = threading.RLock()
 # ip+post_id -> last view timestamp (anti-refresh spam, in-memory)
 RECENT_VIEWS: dict[str, float] = {}
 VIEW_COOLDOWN_SEC = 6 * 60 * 60  # 6 hours per IP per post
+VIEWS_DIRTY = False
+LAST_GITHUB_PUSH = 0.0
+GITHUB_PUSH_MIN_INTERVAL = 60.0  # seconds
 
 
 def ensure_content_file() -> None:
@@ -107,6 +110,18 @@ def github_enabled() -> bool:
 
 
 def read_content_from_github() -> dict | None:
+    """Prefer public raw URL (works without token); fall back to Contents API."""
+    if GITHUB_REPO:
+        raw = (
+            f"https://raw.githubusercontent.com/{GITHUB_REPO}/"
+            f"{GITHUB_BRANCH}/{GITHUB_CONTENT_PATH}?t={int(time.time())}"
+        )
+        try:
+            req = urllib.request.Request(raw, headers={"User-Agent": "promo-landing"})
+            with urllib.request.urlopen(req, timeout=30) as resp:
+                return json.loads(resp.read().decode("utf-8"))
+        except Exception as exc:  # noqa: BLE001
+            sys.stdout.write(f"GitHub raw read skipped: {exc}\n")
     if not github_enabled():
         return None
     api = (
@@ -119,11 +134,11 @@ def read_content_from_github() -> dict | None:
         text = base64.b64decode(encoded).decode("utf-8")
         return json.loads(text)
     except Exception as exc:  # noqa: BLE001
-        sys.stdout.write(f"GitHub read skipped: {exc}\n")
+        sys.stdout.write(f"GitHub API read skipped: {exc}\n")
         return None
 
 
-def write_content_to_github(data: dict) -> None:
+def write_content_to_github(data: dict, message: str = "chore: sync site content/views") -> None:
     if not github_enabled():
         return
     api = f"https://api.github.com/repos/{GITHUB_REPO}/contents/{GITHUB_CONTENT_PATH}"
@@ -134,15 +149,95 @@ def write_content_to_github(data: dict) -> None:
     except urllib.error.HTTPError as exc:
         if exc.code != 404:
             raise
-    body = json.dumps(data, ensure_ascii=False, indent=2) + "\n"
+    # Never push admin password from env-only setups as empty wipe incorrectly
+    body_data = json.loads(json.dumps(data))
+    site = body_data.get("site")
+    if isinstance(site, dict) and ADMIN_PASSWORD_ENV:
+        # Keep file password blank; auth uses env
+        site["adminPassword"] = ""
+    body = json.dumps(body_data, ensure_ascii=False, indent=2) + "\n"
     payload = {
-        "message": "chore: update site content via admin",
+        "message": message,
         "content": base64.b64encode(body.encode("utf-8")).decode("ascii"),
         "branch": GITHUB_BRANCH,
     }
     if sha:
         payload["sha"] = sha
     _github_api(api, method="PUT", payload=payload)
+
+
+def merge_remote_views(local_content: dict, remote: dict) -> dict:
+    """Keep the higher view count for each post id."""
+    remote_map = {
+        str(p.get("id")): int(p.get("views") or 0)
+        for p in (remote.get("posts") or [])
+        if isinstance(p, dict) and p.get("id")
+    }
+    for post in local_content.get("posts") or []:
+        if not isinstance(post, dict) or not post.get("id"):
+            continue
+        pid = str(post["id"])
+        post["views"] = max(int(post.get("views") or 0), remote_map.get(pid, 0))
+    return local_content
+
+
+def restore_from_github() -> bool:
+    """On boot: pull latest content/views from GitHub so redeploys don't reset counters."""
+    remote = read_content_from_github()
+    if not remote or "posts" not in remote:
+        return False
+    with CONTENT_LOCK:
+        local = _read_json(CONTENT_PATH) if CONTENT_PATH.exists() else {"posts": []}
+        # Start from remote (source of truth across deploys), then max-merge local leftovers
+        merged = json.loads(json.dumps(remote))
+        merged = merge_remote_views(merged, local)
+        views = {
+            str(p.get("id")): int(p.get("views") or 0)
+            for p in (merged.get("posts") or [])
+            if isinstance(p, dict) and p.get("id")
+        }
+        # Preserve local admin password if remote blank
+        local_pwd = ((local.get("site") or {}).get("adminPassword") or "").strip()
+        remote_pwd = ((merged.get("site") or {}).get("adminPassword") or "").strip()
+        if local_pwd and not remote_pwd:
+            merged.setdefault("site", {})["adminPassword"] = local_pwd
+        write_content_local(merged)
+        write_views(views)
+    return True
+
+
+def mark_views_dirty() -> None:
+    global VIEWS_DIRTY
+    VIEWS_DIRTY = True
+
+
+def flush_views_to_github(force: bool = False) -> None:
+    global VIEWS_DIRTY, LAST_GITHUB_PUSH
+    if not github_enabled():
+        return
+    now = time.time()
+    with CONTENT_LOCK:
+        if not VIEWS_DIRTY and not force:
+            return
+        if not force and now - LAST_GITHUB_PUSH < GITHUB_PUSH_MIN_INTERVAL:
+            return
+        content = merge_views_into_content(_read_json(CONTENT_PATH), read_views())
+        try:
+            write_content_to_github(content, message="backup: sync view counts")
+            VIEWS_DIRTY = False
+            LAST_GITHUB_PUSH = now
+            sys.stdout.write("已回写浏览量到 GitHub\n")
+        except Exception as exc:  # noqa: BLE001
+            sys.stdout.write(f"GitHub 回写失败: {exc}\n")
+
+
+def github_flusher() -> None:
+    while True:
+        time.sleep(30)
+        try:
+            flush_views_to_github(force=False)
+        except Exception as exc:  # noqa: BLE001
+            sys.stdout.write(f"flusher error: {exc}\n")
 
 
 def read_views() -> dict[str, int]:
@@ -210,9 +305,9 @@ def write_content_local(data: dict) -> None:
 
 
 def write_content(data: dict) -> None:
+    """Admin save: views in payload are authoritative (can reset to 0)."""
     with CONTENT_LOCK:
         views = read_views()
-        # Keep real counters unless admin explicitly changed a post's views.
         for post in data.get("posts") or []:
             if not isinstance(post, dict):
                 continue
@@ -223,13 +318,16 @@ def write_content(data: dict) -> None:
                 incoming = int(post.get("views") or 0)
             except (TypeError, ValueError):
                 incoming = 0
-            current = int(views.get(pid, 0))
-            # Admin form may send stale lower number; never decrease automatically.
-            views[pid] = max(current, incoming)
+            views[pid] = max(0, incoming)
             post["views"] = views[pid]
         write_views(views)
         write_content_local(data)
-    write_content_to_github(data)
+        mark_views_dirty()
+    # Best-effort immediate persist
+    try:
+        flush_views_to_github(force=True)
+    except Exception:  # noqa: BLE001
+        write_content_to_github(data)
 
 
 def increment_view(post_id: str, client_key: str) -> tuple[bool, int]:
@@ -256,6 +354,7 @@ def increment_view(post_id: str, client_key: str) -> tuple[bool, int]:
                 post["views"] = current
                 break
         write_content_local(content)
+        mark_views_dirty()
         RECENT_VIEWS[gate] = now
         # light cleanup
         if len(RECENT_VIEWS) > 5000:
@@ -331,9 +430,11 @@ class Handler(BaseHTTPRequestHandler):
                 200,
                 {
                     "ok": True,
-                    "persist": "github" if github_enabled() else "local",
+                    "persist": "github" if github_enabled() else "github-raw+local",
                     "views": True,
                     "admin_env": bool(ADMIN_PASSWORD_ENV),
+                    "github_repo": GITHUB_REPO,
+                    "github_write": github_enabled(),
                 },
             )
             return
@@ -459,27 +560,18 @@ class Handler(BaseHTTPRequestHandler):
 def main() -> None:
     ensure_content_file()
     ensure_views_file()
-    # Prefer remote content when GitHub sync is configured (survives free-host restarts)
-    remote = read_content_from_github()
-    if remote is not None:
-        with CONTENT_LOCK:
-            write_content_local(remote)
-            # Refresh views baseline from remote content if views file empty-ish
-            views = read_views()
-            for post in remote.get("posts") or []:
-                if not isinstance(post, dict):
-                    continue
-                pid = str(post.get("id") or "")
-                if not pid:
-                    continue
-                views[pid] = max(int(views.get(pid, 0)), int(post.get("views") or 0))
-            write_views(views)
-        print("已从 GitHub 同步内容")
+    if restore_from_github():
+        print(f"已从 GitHub 恢复内容/浏览量: {GITHUB_REPO}@{GITHUB_BRANCH}")
+    else:
+        print("GitHub 恢复跳过，使用本地种子")
+    if github_enabled():
+        threading.Thread(target=github_flusher, name="github-flusher", daemon=True).start()
+        print("已启用浏览量回写 GitHub")
     httpd = ThreadingHTTPServer((HOST, PORT), Handler)
     print(f"前台:  http://127.0.0.1:{PORT}/")
     print(f"后台:  http://127.0.0.1:{PORT}/admin.html")
     print(f"浏览量: {VIEWS_PATH}")
-    print(f"持久化: {'GitHub ' + GITHUB_REPO if github_enabled() else str(CONTENT_PATH)}")
+    print(f"持久化: GitHub {GITHUB_REPO} (write={'on' if github_enabled() else 'off, backup-action'})")
     print("按 Ctrl+C 停止")
     try:
         httpd.serve_forever()

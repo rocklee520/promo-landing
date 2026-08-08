@@ -13,3 +13,10 @@ services:
       - key: ADMIN_PASSWORD
         generateValue: false
         sync: false
+      - key: GITHUB_REPO
+        value: rocklee520/promo-landing
+      - key: GITHUB_BRANCH
+        value: main
+      - key: GITHUB_TOKEN
+        generateValue: false
+        sync: false

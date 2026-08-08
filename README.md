@@ -14,6 +14,13 @@
 生产环境请在 Render → Environment 设置：
 
 - `ADMIN_PASSWORD` = 你的后台密码（例如 `liy123456780`）
+- `GITHUB_REPO` = `rocklee520/promo-landing`（已可默认）
+- `GITHUB_TOKEN` = GitHub Fine-grained / classic PAT（`repo` 权限，用于浏览量回写，强烈建议）
+
+浏览量持久化：
+1. 启动时从 GitHub 拉取最新 `data/content.json`（含浏览量）
+2. 每 5 分钟 Action 把线上浏览量备份回仓库
+3. 若配置了 `GITHUB_TOKEN`，浏览量会更快回写，部署后不会从 0 开始
 
 ## 备份（已启用）
 
