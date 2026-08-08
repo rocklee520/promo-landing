@@ -54,7 +54,10 @@
   function renderTags() {
     const tags = state.data.tags?.length ? state.data.tags : ["全部"];
     if (!tags.includes("全部")) tags.unshift("全部");
-    if (!tags.includes("直播系列")) tags.splice(1, 0, "直播系列");
+    const navSeries = (state.data.nav || []).filter((n) => n && n !== "全部");
+    for (const s of navSeries) {
+      if (!tags.includes(s)) tags.splice(1, 0, s);
+    }
     els.tagBar.innerHTML = tags
       .map(
         (tag) =>
@@ -190,8 +193,9 @@
     const btn = e.target.closest("[data-tag]");
     if (!btn) return;
     const tag = btn.dataset.tag;
-    if (tag === "直播系列") {
-      location.href = "/?series=直播系列";
+    const navSeries = new Set((state.data?.nav || []).filter((n) => n && n !== "全部"));
+    if (navSeries.has(tag)) {
+      location.href = `/?series=${encodeURIComponent(tag)}`;
       return;
     }
     if (seriesParam && tag === "全部") {

@@ -5,21 +5,37 @@
     "footer": "内容由站长更新维护 · 点击条目查看详情",
     "adminPassword": ""
   },
-  "nav": [
-    "全部",
-    "直播系列",
-    "最新",
-    "热门"
-  ],
-  "tags": [
-    "全部",
-    "直播系列",
-    "最新",
-    "热门",
-    "视频",
-    "图片"
-  ],
+  "nav": ["全部", "直播系列", "网红系列", "最新", "热门"],
+  "tags": ["全部", "直播系列", "网红系列", "最新", "热门", "视频", "图片"],
   "posts": [
+    {
+      "id": "tuzaibaby-102",
+      "title": "102. tuzaibaby",
+      "subtitle": "7.12补链兔崽爱喷水tuzaibaby 推特顶级萝莉长视频合集 153v56.2G",
+      "cover": "/assets/tuzaibaby/01.jpeg",
+      "summary": "推特顶级萝莉 兔崽爱露出/兔崽爱喷水/tuzaibaby 长视频最全合集，已经去过重，删掉了几十个视频，最终是153个视频。本资源有153部视频作品，大小56.2G",
+      "downloadNote": "本资源支持 百度盘 下载",
+      "link": "",
+      "gallery": [
+        "/assets/tuzaibaby/01.jpeg",
+        "/assets/tuzaibaby/02.jpeg",
+        "/assets/tuzaibaby/03.jpg",
+        "/assets/tuzaibaby/04.jpeg",
+        "/assets/tuzaibaby/05.jpeg",
+        "/assets/tuzaibaby/06.jpg",
+        "/assets/tuzaibaby/07.jpg",
+        "/assets/tuzaibaby/08.jpg",
+        "/assets/tuzaibaby/09.jpeg",
+        "/assets/tuzaibaby/10.jpeg",
+        "/assets/tuzaibaby/11.jpeg"
+      ],
+      "tags": ["网红系列", "网红", "tuzaibaby", "热门"],
+      "series": "网红系列",
+      "views": 0,
+      "date": "2026-07-12",
+      "featured": true,
+      "hot": true
+    },
     {
       "id": "kiki-098",
       "title": "098.小野猫 kiki酱",
@@ -48,55 +64,12 @@
         "/assets/kiki/17.png",
         "/assets/kiki/18.png"
       ],
-      "tags": [
-        "直播系列",
-        "直播",
-        "kiki酱",
-        "热门"
-      ],
+      "tags": ["直播系列", "直播", "kiki酱", "热门"],
       "series": "直播系列",
-      "views": 0,
+      "views": 1,
       "date": "2026-07-24",
       "featured": true,
       "hot": true
-    },
-    {
-      "id": "demo-2",
-      "title": "示例：高清预览图整理（请替换）",
-      "subtitle": "",
-      "cover": "https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=800&q=80",
-      "summary": "放封面预览图和一段介绍即可。访客点进来会跳到你填的链接。",
-      "downloadNote": "",
-      "link": "https://example.com/your-link-2",
-      "gallery": [],
-      "tags": [
-        "图片",
-        "热门"
-      ],
-      "series": "",
-      "views": 0,
-      "date": "2026-08-06",
-      "featured": false,
-      "hot": true
-    },
-    {
-      "id": "demo-3",
-      "title": "示例：持续更新系列（请替换）",
-      "subtitle": "",
-      "cover": "https://images.unsplash.com/photo-1536240478705-a8d4d40a8d19?w=800&q=80",
-      "summary": "适合做系列更新：改日期、补介绍、换封面，保存后前台立刻生效。",
-      "downloadNote": "",
-      "link": "https://example.com/your-link-3",
-      "gallery": [],
-      "tags": [
-        "视频",
-        "最新"
-      ],
-      "series": "",
-      "views": 0,
-      "date": "2026-08-05",
-      "featured": false,
-      "hot": false
     }
   ]
 }

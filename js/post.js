@@ -46,12 +46,13 @@
 
   loadContent()
     .then(async (data) => {
-      renderSiteChrome(data, { activeNav: "直播系列" });
       const post = (data.posts || []).find((p) => p.id === id);
       if (!post) {
+        renderSiteChrome(data, { activeNav: "全部" });
         root.innerHTML = `<div class="empty">未找到内容。<a href="/">返回首页</a></div>`;
         return;
       }
+      renderSiteChrome(data, { activeNav: post.series || "全部" });
       renderPost(post);
       const result = await trackView(post.id);
       if (result && typeof result.views === "number") {

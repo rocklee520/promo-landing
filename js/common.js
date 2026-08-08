@@ -47,7 +47,7 @@ window.Promo = (() => {
   }
 
   function postHref(p) {
-    if (p.gallery?.length || p.subtitle || p.series === "直播系列") {
+    if (p.gallery?.length || p.subtitle || p.series) {
       return `/post.html?id=${encodeURIComponent(p.id)}`;
     }
     if (p.link) return p.link;
