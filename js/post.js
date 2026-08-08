@@ -1,5 +1,12 @@
 (() => {
-  const { escapeHtml, escapeAttr, loadContent, bindSearchForm, renderSiteChrome } = window.Promo;
+  const {
+    escapeHtml,
+    escapeAttr,
+    loadContent,
+    trackView,
+    bindSearchForm,
+    renderSiteChrome,
+  } = window.Promo;
   const params = new URLSearchParams(location.search);
   const id = params.get("id");
   const root = document.getElementById("noteArticle");
@@ -31,14 +38,14 @@
       <h1 class="note-h1">内容图集预览</h1>
       <div class="note-meta">
         <span>${escapeHtml(p.date || "")}</span>
-        <span>${Number(p.views || 0)} 浏览</span>
+        <span id="viewCount">${Number(p.views || 0)} 浏览</span>
         <span>${escapeHtml((p.tags || []).join(" · "))}</span>
       </div>
     `;
   }
 
   loadContent()
-    .then((data) => {
+    .then(async (data) => {
       renderSiteChrome(data, { activeNav: "直播系列" });
       const post = (data.posts || []).find((p) => p.id === id);
       if (!post) {
@@ -46,6 +53,11 @@
         return;
       }
       renderPost(post);
+      const result = await trackView(post.id);
+      if (result && typeof result.views === "number") {
+        const el = document.getElementById("viewCount");
+        if (el) el.textContent = `${result.views} 浏览`;
+      }
     })
     .catch((err) => {
       root.innerHTML = `<div class="empty">加载失败：${escapeHtml(err.message)}</div>`;

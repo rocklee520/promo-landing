@@ -108,15 +108,16 @@
   }
 
   function rankedPosts() {
+    // 热门推荐 / 最多浏览：都按真实浏览量排序
     let list = posts().filter((p) => inSeries(p, seriesParam));
-    if (state.rankMode === "hot") {
-      const hot = list.filter((p) => p.hot || p.featured);
-      list = hot.length ? hot : list;
-      list.sort((a, b) => (b.views || 0) - (a.views || 0));
-    } else if (state.rankMode === "views") {
-      list.sort((a, b) => (b.views || 0) - (a.views || 0));
-    } else {
+    if (state.rankMode === "newest") {
       list.sort((a, b) => String(b.date || "").localeCompare(String(a.date || "")));
+    } else {
+      list.sort((a, b) => {
+        const dv = (b.views || 0) - (a.views || 0);
+        if (dv !== 0) return dv;
+        return String(b.date || "").localeCompare(String(a.date || ""));
+      });
     }
     return list.slice(0, 8);
   }

@@ -17,6 +17,35 @@ window.Promo = (() => {
     return res.json();
   }
 
+  /** Record a real page view (server-side, 6h cooldown per visitor per post). */
+  async function trackView(postId) {
+    if (!postId) return null;
+    const key = `viewed:${postId}`;
+    try {
+      if (sessionStorage.getItem(key)) return null;
+    } catch {
+      /* ignore */
+    }
+    try {
+      const res = await fetch("/api/view", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "same-origin",
+        body: JSON.stringify({ id: postId }),
+      });
+      if (!res.ok) return null;
+      const data = await res.json();
+      try {
+        sessionStorage.setItem(key, "1");
+      } catch {
+        /* ignore */
+      }
+      return data;
+    } catch {
+      return null;
+    }
+  }
+
   function postHref(p) {
     if (p.gallery?.length || p.subtitle || p.series === "直播系列") {
       return `/post.html?id=${encodeURIComponent(p.id)}`;
@@ -94,6 +123,7 @@ window.Promo = (() => {
     escapeHtml,
     escapeAttr,
     loadContent,
+    trackView,
     postHref,
     postTarget,
     searchPosts,
