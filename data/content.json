@@ -34,7 +34,10 @@
       "updates": "",
       "link": "",
       "gallery": [
-        "/assets/pansihuayuan/01.jpg"
+        "/assets/pansihuayuan/01.jpg",
+        "/assets/pansihuayuan/02.jpg",
+        "/assets/pansihuayuan/03.jpg",
+        "/assets/pansihuayuan/04.jpg"
       ],
       "tags": [
         "机构系列",
@@ -48,7 +51,7 @@
       "featured": true,
       "hot": true,
       "price": "15",
-      "updatedAt": "2026-08-08T14:19:35.890Z"
+      "updatedAt": "2026-08-08T14:20:45.424Z"
     },
     {
       "id": "suchang-wh4",
