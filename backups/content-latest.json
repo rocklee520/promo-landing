@@ -21,6 +21,35 @@
   ],
   "posts": [
     {
+      "id": "hangse-jg5",
+      "title": "JG5.行色系列330G",
+      "subtitle": "全网绝版，无水印4K画质原图",
+      "cover": "/assets/hangse/01.jpg",
+      "summary": "全网绝版，无水印4K画质原图",
+      "downloadNote": "本资源支持 百度盘 下载",
+      "updates": "",
+      "link": "",
+      "gallery": [
+        "/assets/hangse/01.jpg",
+        "/assets/hangse/02.jpg",
+        "/assets/hangse/03.jpg",
+        "/assets/hangse/04.jpg"
+      ],
+      "tags": [
+        "机构系列",
+        "机构",
+        "行色",
+        "热门"
+      ],
+      "series": "机构系列",
+      "views": 0,
+      "date": "2026-08-09",
+      "featured": true,
+      "hot": true,
+      "price": "30",
+      "updatedAt": "2026-08-08T16:22:43.987Z"
+    },
+    {
       "id": "pansihuayuan-jg3",
       "title": "JG3.pans花园系列47G",
       "subtitle": "国人之光，珍稀无马",
@@ -193,7 +222,7 @@
         "热门"
       ],
       "series": "直播系列",
-      "views": 4,
+      "views": 5,
       "date": "2026-01-30",
       "featured": true,
       "hot": true,
