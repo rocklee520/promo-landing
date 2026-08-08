@@ -68,9 +68,16 @@
   }
 
   function featuredPosts() {
+    // 轮播：最多 5 条，按浏览量从高到低
     const scoped = posts().filter((p) => inSeries(p, seriesParam));
-    const featured = scoped.filter((p) => p.featured);
-    return featured.length ? featured : scoped.slice(0, 5);
+    return scoped
+      .slice()
+      .sort((a, b) => {
+        const dv = (b.views || 0) - (a.views || 0);
+        if (dv) return dv;
+        return String(b.date || "").localeCompare(String(a.date || ""));
+      })
+      .slice(0, 5);
   }
 
   function renderCarousel() {
