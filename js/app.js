@@ -15,7 +15,6 @@
 
   const state = {
     data: null,
-    activeTag: seriesParam || "全部",
     rankMode: "hot",
     sortMode: "newest",
     slide: 0,
@@ -25,7 +24,6 @@
   const els = {
     carouselTrack: document.getElementById("carouselTrack"),
     carouselDots: document.getElementById("carouselDots"),
-    tagBar: document.getElementById("tagBar"),
     rankTabs: document.getElementById("rankTabs"),
     rankList: document.getElementById("rankList"),
     sortTabs: document.getElementById("sortTabs"),
@@ -46,25 +44,9 @@
 
   function renderAll() {
     renderSiteChrome(state.data, { activeNav: seriesParam || "全部" });
-    renderTags();
     renderCarousel();
     renderRank();
     renderPosts();
-  }
-
-  function renderTags() {
-    const tags = state.data.tags?.length ? state.data.tags : ["全部"];
-    if (!tags.includes("全部")) tags.unshift("全部");
-    const navSeries = (state.data.nav || []).filter((n) => n && n !== "全部");
-    for (const s of navSeries) {
-      if (!tags.includes(s)) tags.splice(1, 0, s);
-    }
-    els.tagBar.innerHTML = tags
-      .map(
-        (tag) =>
-          `<button class="tag ${tag === state.activeTag ? "active" : ""}" data-tag="${escapeAttr(tag)}">${escapeHtml(tag)}</button>`
-      )
-      .join("");
   }
 
   function featuredPosts() {
@@ -155,14 +137,7 @@
   }
 
   function filteredSortedPosts() {
-    let list = posts().filter((p) => inSeries(p, seriesParam));
-    if (state.activeTag && state.activeTag !== "全部") {
-      list = list.filter(
-        (p) =>
-          (p.tags || []).includes(state.activeTag) ||
-          p.series === state.activeTag
-      );
-    }
+    const list = posts().filter((p) => inSeries(p, seriesParam));
     if (state.sortMode === "oldest") {
       list.sort((a, b) => String(a.date || "").localeCompare(String(b.date || "")));
     } else if (state.sortMode === "views") {
@@ -175,7 +150,7 @@
 
   function renderPosts() {
     const list = filteredSortedPosts();
-    const label = seriesParam || (state.activeTag !== "全部" ? state.activeTag : "全部内容");
+    const label = seriesParam || "全部内容";
     els.allTitle.textContent = `${label}（${list.length}）`;
     if (!list.length) {
       els.postList.innerHTML = '<div class="empty">该分类下暂无内容</div>';
@@ -196,24 +171,6 @@
       )
       .join("");
   }
-
-  els.tagBar.addEventListener("click", (e) => {
-    const btn = e.target.closest("[data-tag]");
-    if (!btn) return;
-    const tag = btn.dataset.tag;
-    const navSeries = new Set((state.data?.nav || []).filter((n) => n && n !== "全部"));
-    if (navSeries.has(tag)) {
-      location.href = `/?series=${encodeURIComponent(tag)}`;
-      return;
-    }
-    if (seriesParam && tag === "全部") {
-      location.href = "/";
-      return;
-    }
-    state.activeTag = tag;
-    renderTags();
-    renderPosts();
-  });
 
   els.rankTabs.addEventListener("click", (e) => {
     const btn = e.target.closest("[data-rank]");
@@ -241,7 +198,6 @@
   loadContent()
     .then((data) => {
       state.data = data;
-      if (seriesParam) state.activeTag = seriesParam;
       renderAll();
     })
     .catch((err) => {
