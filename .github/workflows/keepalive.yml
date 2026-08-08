@@ -1,0 +1,23 @@
+name: Keepalive
+
+# Ping the public site every 10 minutes to reduce Render free-tier cold starts.
+# After deploy, set repository variable RENDER_URL=https://your-service.onrender.com
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping health
+        env:
+          RENDER_URL: ${{ vars.RENDER_URL }}
+        run: |
+          if [ -z "$RENDER_URL" ]; then
+            echo "Set repo variable RENDER_URL after first deploy."
+            exit 0
+          fi
+          curl -fsS "$RENDER_URL/api/health" || true
