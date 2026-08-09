@@ -17,7 +17,8 @@
     "机构系列",
     "岛国系列",
     "TP系列",
-    "舞蹈系列"
+    "舞蹈系列",
+    "软件系列"
   ],
   "tags": [
     "全部",
@@ -27,42 +28,44 @@
     "岛国系列",
     "TP系列",
     "舞蹈系列",
+    "软件系列",
     "视频",
     "图片"
   ],
   "posts": [
     {
-      "id": "mingbu-wuma-009",
-      "title": "9.明步无马7V27G",
-      "subtitle": "绝版母带破解",
-      "cover": "/assets/mingbu-wuma-9/01.jpg",
-      "summary": "绝版母带破解",
+      "id": "anzhuo-shenqi-006",
+      "title": "6.安卓神器（软件）",
+      "subtitle": "百万a微在线看（限安卓）",
+      "cover": "/assets/anzhuo-shenqi-6/01.jpg",
+      "summary": "百万a微在线看（限安卓）",
       "downloadNote": "本资源支持 百度盘 下载",
       "updates": "",
       "link": "",
       "gallery": [
-        "/assets/mingbu-wuma-9/01.jpg",
-        "/assets/mingbu-wuma-9/02.jpg",
-        "/assets/mingbu-wuma-9/03.jpg",
-        "/assets/mingbu-wuma-9/04.jpg",
-        "/assets/mingbu-wuma-9/05.jpg",
-        "/assets/mingbu-wuma-9/06.jpg",
-        "/assets/mingbu-wuma-9/07.jpg"
+        "/assets/anzhuo-shenqi-6/01.jpg",
+        "/assets/anzhuo-shenqi-6/02.jpg",
+        "/assets/anzhuo-shenqi-6/03.jpg",
+        "/assets/anzhuo-shenqi-6/04.jpg",
+        "/assets/anzhuo-shenqi-6/05.jpg",
+        "/assets/anzhuo-shenqi-6/06.jpg",
+        "/assets/anzhuo-shenqi-6/07.jpg",
+        "/assets/anzhuo-shenqi-6/08.jpg",
+        "/assets/anzhuo-shenqi-6/09.jpg"
       ],
       "tags": [
-        "岛国系列",
-        "岛国",
-        "日本",
-        "明步无马7V",
+        "软件系列",
+        "软件",
+        "安卓神器",
         "热门"
       ],
-      "series": "岛国系列",
+      "series": "软件系列",
       "views": 0,
       "date": "2026-08-09",
       "featured": true,
       "hot": true,
-      "price": "12",
-      "updatedAt": "2026-08-09T13:55:22.659Z"
+      "price": "58",
+      "updatedAt": "2026-08-09T13:57:05.222Z"
     },
     {
       "id": "dachi-chezhan-008",
@@ -1245,6 +1248,40 @@
       "hot": true,
       "price": "30",
       "updatedAt": "2026-08-09T13:43:56.689Z",
+      "purchaseRequired": false
+    },
+    {
+      "id": "mingbu-wuma-009",
+      "title": "9.明步无马7V27G",
+      "subtitle": "绝版母带破解",
+      "cover": "/assets/mingbu-wuma-9/01.jpg",
+      "summary": "绝版母带破解",
+      "downloadNote": "本资源支持 百度盘 下载",
+      "updates": "",
+      "link": "",
+      "gallery": [
+        "/assets/mingbu-wuma-9/01.jpg",
+        "/assets/mingbu-wuma-9/02.jpg",
+        "/assets/mingbu-wuma-9/03.jpg",
+        "/assets/mingbu-wuma-9/04.jpg",
+        "/assets/mingbu-wuma-9/05.jpg",
+        "/assets/mingbu-wuma-9/06.jpg",
+        "/assets/mingbu-wuma-9/07.jpg"
+      ],
+      "tags": [
+        "岛国系列",
+        "岛国",
+        "日本",
+        "明步无马7V",
+        "热门"
+      ],
+      "series": "岛国系列",
+      "views": 0,
+      "date": "2026-08-09",
+      "featured": true,
+      "hot": true,
+      "price": "12",
+      "updatedAt": "2026-08-09T13:55:22.659Z",
       "purchaseRequired": false
     }
   ]
