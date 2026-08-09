@@ -26,7 +26,7 @@
     ? `搜索： <span>${escapeHtml(keyword)}</span>`
     : "搜索";
 
-  loadContent()
+  loadContent({ lite: true })
     .then((data) => {
       renderSiteChrome(data, { activeNav: null });
       if (!keyword) {
