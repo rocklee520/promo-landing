@@ -13,7 +13,10 @@
   }
 
   async function fetchContent() {
-    const res = await fetch(`/api/content?ts=${Date.now()}`, { cache: "no-store" });
+    const res = await fetch(`/api/content?ts=${Date.now()}`, {
+      cache: "no-store",
+      headers: password ? { "X-Admin-Password": password } : {},
+    });
     if (!res.ok) throw new Error("加载失败，请确认已启动 server.py");
     data = await res.json();
     ensureShape();
@@ -25,6 +28,12 @@
       subtitle: "最新视频 / 图片预览与介绍",
       footer: "",
       adminPassword: "admin123",
+    };
+    data.site.pay ||= {
+      wechatQr: "",
+      alipayQr: "",
+      note: "付款时请在备注/说明里填写订单号，付完回到本页点「我已付款」。",
+      pushPlusToken: "",
     };
     data.tags ||= ["全部", "直播系列", "网红系列", "机构系列", "岛国系列", "TP系列", "视频", "图片"];
     data.nav ||= ["全部", "直播系列", "网红系列", "机构系列", "岛国系列", "TP系列"];
@@ -40,10 +49,20 @@
     $("cfgPassword").value = "";
     $("cfgPassword").placeholder = "留空则不修改密码";
     $("cfgTags").value = (data.tags || []).join(",");
+    const pay = data.site.pay || {};
+    $("cfgWechatQr").value = pay.wechatQr || "";
+    $("cfgAlipayQr").value = pay.alipayQr || "";
+    $("cfgPayNote").value =
+      pay.note || "付款时请在备注/说明里填写订单号，付完回到本页点「我已付款」。";
+    $("cfgPushPlus").value = "";
+    $("cfgPushPlus").placeholder = pay.pushPlusToken
+      ? "已配置，留空则不修改"
+      : "在 pushplus.plus 获取 token";
     if (!$("editDate").value) $("editDate").value = new Date().toISOString().slice(0, 10);
     renderList();
+    refreshOrders().catch(() => {});
     $("saveHint").textContent =
-      "保存后会写入服务器。浏览量会自动累计；密码留空表示不改。";
+      "保存后会写入服务器。浏览量会自动累计；密码/PushPlus 留空表示不改。付费条目请填「发货链接」。";
   }
 
   function renderList() {
@@ -79,6 +98,12 @@
     const newPwd = $("cfgPassword").value.trim();
     // Blank means keep server-side password (API redacts it from GET)
     data.site.adminPassword = newPwd;
+    data.site.pay = data.site.pay || {};
+    data.site.pay.wechatQr = $("cfgWechatQr").value.trim();
+    data.site.pay.alipayQr = $("cfgAlipayQr").value.trim();
+    data.site.pay.note = $("cfgPayNote").value.trim();
+    const pp = $("cfgPushPlus").value.trim();
+    data.site.pay.pushPlusToken = pp; // blank => server keeps old
     data.tags = $("cfgTags").value
       .split(/[,，]/)
       .map((s) => s.trim())
@@ -109,6 +134,7 @@
     $("editSummary").value = p.summary || "";
     $("editDownloadNote").value = p.downloadNote || "";
     $("editLink").value = p.link || "";
+    $("editFulfillment").value = p.fulfillmentLink || "";
     $("editGallery").value = (p.gallery || []).join("\n");
     $("editSeries").value = p.series || "";
     $("editTags").value = (p.tags || []).join(",");
@@ -127,6 +153,7 @@
     $("editSummary").value = "";
     $("editDownloadNote").value = "";
     $("editLink").value = "";
+    $("editFulfillment").value = "";
     $("editGallery").value = "";
     $("editSeries").value = "";
     $("editTags").value = "";
@@ -158,6 +185,7 @@
       summary: $("editSummary").value.trim(),
       downloadNote: $("editDownloadNote").value.trim(),
       link: $("editLink").value.trim(),
+      fulfillmentLink: $("editFulfillment").value.trim(),
       gallery: $("editGallery").value
         .split(/\r?\n/)
         .map((s) => s.trim())
@@ -263,7 +291,65 @@
   $("saveAllBtn").addEventListener("click", () => {
     saveAll().catch((e) => toast(e.message));
   });
+  async function refreshOrders() {
+    const box = $("ordersList");
+    if (!box) return;
+    const res = await fetch(`/api/orders?ts=${Date.now()}`, {
+      headers: { "X-Admin-Password": password },
+      cache: "no-store",
+    });
+    const body = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(body.error || "加载订单失败");
+    const orders = body.orders || [];
+    box.innerHTML = orders.length
+      ? orders
+          .map((o) => {
+            const pending = o.status === "pending" || o.status === "claimed";
+            return `<div class="orders-row" data-oid="${escapeAttr(o.id)}">
+              <div><b>${escapeHtml(o.id)}</b> · ${escapeHtml(o.amountLabel || "")} · ${escapeHtml(o.status || "")}</div>
+              <div>${escapeHtml(o.title || "")}</div>
+              <div class="muted">${escapeHtml(o.createdAt || "")}${o.claimedAt ? " · 已声明付款" : ""}</div>
+              ${
+                pending
+                  ? `<div class="admin-actions">
+                      <button class="btn btn-primary" data-oact="confirm">确认放行</button>
+                      <button class="btn" data-oact="reject">驳回</button>
+                    </div>`
+                  : ""
+              }
+            </div>`;
+          })
+          .join("")
+      : '<p class="muted">暂无订单。</p>';
+  }
+
+  async function orderAct(id, kind) {
+    const res = await fetch(`/api/orders/${kind}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Admin-Password": password,
+      },
+      body: JSON.stringify({ id }),
+    });
+    const body = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(body.error || "操作失败");
+    toast(kind === "confirm" ? "已放行" : "已驳回");
+    await refreshOrders();
+  }
+
   $("exportBtn").addEventListener("click", exportJson);
+  $("refreshOrdersBtn")?.addEventListener("click", () => {
+    refreshOrders()
+      .then(() => toast("订单已刷新"))
+      .catch((e) => toast(e.message));
+  });
+  $("ordersList")?.addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-oact]");
+    const row = e.target.closest("[data-oid]");
+    if (!btn || !row) return;
+    orderAct(row.dataset.oid, btn.dataset.oact).catch((err) => toast(err.message));
+  });
   $("logoutBtn").addEventListener("click", () => {
     sessionStorage.removeItem(AUTH_KEY);
     location.reload();

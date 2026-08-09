@@ -3,7 +3,13 @@
     "name": "小米素材站",
     "subtitle": "最新视频 / 图片预览与介绍",
     "footer": "内容由站长更新维护 · 点击条目查看详情",
-    "adminPassword": ""
+    "adminPassword": "",
+    "pay": {
+      "wechatQr": "",
+      "alipayQr": "",
+      "note": "付款时请在备注/说明里填写订单号，付完回到本页点「我已付款」。",
+      "pushPlusToken": ""
+    }
   },
   "nav": [
     "全部",
@@ -43,7 +49,7 @@
         "热门"
       ],
       "series": "网红系列",
-      "views": 0,
+      "views": 1,
       "date": "2026-08-09",
       "featured": true,
       "hot": true,

@@ -34,6 +34,12 @@
           <label>页脚文案<input id="cfgFooter" /></label>
           <label>管理密码（保存后生效）<input id="cfgPassword" type="text" /></label>
           <label>标签（逗号分隔）<input id="cfgTags" placeholder="全部,最新,热门,视频,图片" /></label>
+          <div class="row-2">
+            <label>微信收款码图片 URL<input id="cfgWechatQr" placeholder="/assets/pay/wechat.jpg" /></label>
+            <label>支付宝收款码图片 URL<input id="cfgAlipayQr" placeholder="/assets/pay/alipay.jpg" /></label>
+          </div>
+          <label>付款说明<input id="cfgPayNote" placeholder="付款时请在备注里填写订单号…" /></label>
+          <label>PushPlus token（微信推送，留空不改）<input id="cfgPushPlus" type="password" autocomplete="off" placeholder="在 pushplus.plus 获取" /></label>
         </div>
         <div class="admin-actions">
           <button class="btn btn-primary" id="saveAllBtn">保存全部到服务器</button>
@@ -61,7 +67,8 @@
           <label>封面图链接（URL）<input id="editCover" placeholder="/assets/... 或 https://..." /></label>
           <label>介绍<textarea id="editSummary" placeholder="内容简介"></textarea></label>
           <label>下载说明<input id="editDownloadNote" placeholder="**本资源支持百度网盘 下载" /></label>
-          <label>跳转 / 下载链接<input id="editLink" placeholder="https://..." /></label>
+          <label>公开链接（免费内容用；付费请留空）<input id="editLink" placeholder="https://..." /></label>
+          <label>发货链接（百度云，付费确认后才显示）<input id="editFulfillment" placeholder="https://pan.baidu.com/s/..." /></label>
           <label>图集（每行一个图片 URL）<textarea id="editGallery" placeholder="/assets/kiki/01.jpeg"></textarea></label>
           <div class="row-2">
             <label>系列页签
@@ -97,6 +104,15 @@
           <button class="btn btn-primary" id="upsertBtn">写入列表</button>
           <button class="btn" id="resetFormBtn">清空表单</button>
         </div>
+      </div>
+
+      <div class="admin-card">
+        <h2>待处理订单</h2>
+        <p class="muted">客户点「我已付款」后会出现在这里；也可在微信推送里一键确认。点「刷新订单」更新列表。</p>
+        <div class="admin-actions" style="margin-bottom:10px;">
+          <button class="btn" id="refreshOrdersBtn" type="button">刷新订单</button>
+        </div>
+        <div id="ordersList"></div>
       </div>
 
       <div class="admin-card">

@@ -678,6 +678,140 @@ select {
   text-decoration: underline;
 }
 
+.pay-panel {
+  margin: 18px 0 24px;
+  padding: 16px 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.pay-box {
+  margin-top: 12px;
+  padding: 14px;
+  background: #f7f5fb;
+  border-radius: 8px;
+}
+
+.pay-order-row {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.pay-order-id {
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  word-break: break-all;
+}
+
+.pay-amount {
+  margin: 8px 0;
+  font-size: 1.05rem;
+}
+
+.pay-qr-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.pay-qr-grid figure {
+  margin: 0;
+  text-align: center;
+}
+
+.pay-qr-grid img {
+  width: 100%;
+  max-width: 220px;
+  height: auto;
+  background: #fff;
+  border-radius: 6px;
+}
+
+.pay-qr-grid figcaption {
+  margin-top: 6px;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.pay-status {
+  margin-top: 12px;
+  color: #555;
+}
+
+.pay-error {
+  color: #b42318;
+}
+
+.pay-unlocked-title {
+  font-weight: 700;
+  margin: 12px 0 8px;
+}
+
+.pay-link-raw {
+  word-break: break-all;
+  font-size: 0.88rem;
+}
+
+.confirm-body {
+  min-height: 100vh;
+  margin: 0;
+  background: linear-gradient(160deg, #f7f2ff 0%, #fff8f2 55%, #f4fbff 100%);
+}
+
+.confirm-shell {
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 28px 16px 40px;
+}
+
+.confirm-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 22px 18px;
+  box-shadow: 0 10px 30px rgba(40, 20, 60, 0.08);
+}
+
+.confirm-card h1 {
+  margin: 0 0 14px;
+  font-size: 1.35rem;
+}
+
+.confirm-actions {
+  display: grid;
+  gap: 10px;
+  margin: 18px 0 12px;
+}
+
+.confirm-actions .btn {
+  width: 100%;
+  justify-content: center;
+}
+
+.confirm-msg {
+  color: #0f7b3a;
+  font-weight: 600;
+}
+
+.orders-row {
+  display: grid;
+  gap: 6px;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.orders-row:last-child {
+  border-bottom: 0;
+}
+
+@media (max-width: 640px) {
+  .pay-qr-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .note-gallery {
   margin: 12px 0 8px;
 }

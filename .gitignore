@@ -9,3 +9,6 @@ data/views.json.tmp
 .venv/
 node_modules/
 .env
+
+data/orders.json
+data/orders.json.tmp
