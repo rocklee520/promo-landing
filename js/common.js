@@ -25,10 +25,31 @@ window.Promo = (() => {
     return `${title} <span class="price-tag">${escapeHtml(price)}</span>`;
   }
 
-  async function loadContent() {
-    const res = await fetch(`/api/content?ts=${Date.now()}`, { cache: "no-store" });
+  async function loadContent(options = {}) {
+    const lite = Boolean(options.lite);
+    const cacheKey = lite ? "promo_content_lite_v1" : "promo_content_full_v1";
+    const ttlMs = lite ? 60_000 : 30_000;
+    try {
+      const cached = sessionStorage.getItem(cacheKey);
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (parsed && parsed._ts && Date.now() - parsed._ts < ttlMs && parsed.data) {
+          return parsed.data;
+        }
+      }
+    } catch {
+      /* ignore */
+    }
+    const q = lite ? "lite=1" : "";
+    const res = await fetch(`/api/content?${q}`, { cache: lite ? "default" : "no-store" });
     if (!res.ok) throw new Error("无法加载内容");
-    return res.json();
+    const data = await res.json();
+    try {
+      sessionStorage.setItem(cacheKey, JSON.stringify({ _ts: Date.now(), data }));
+    } catch {
+      /* ignore quota */
+    }
+    return data;
   }
 
   /** Record a real page view (server-side, 6h cooldown per visitor per post). */
@@ -61,7 +82,7 @@ window.Promo = (() => {
   }
 
   function postHref(p) {
-    if (p.gallery?.length || p.subtitle || p.series) {
+    if (p.gallery?.length || p.galleryCount || p.subtitle || p.series) {
       return `/post.html?id=${encodeURIComponent(p.id)}`;
     }
     if (p.link) return p.link;
