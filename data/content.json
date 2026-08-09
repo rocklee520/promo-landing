@@ -32,6 +32,39 @@
   ],
   "posts": [
     {
+      "id": "mingbu-wuma-009",
+      "title": "9.明步无马7V27G",
+      "subtitle": "绝版母带破解",
+      "cover": "/assets/mingbu-wuma-9/01.jpg",
+      "summary": "绝版母带破解",
+      "downloadNote": "本资源支持 百度盘 下载",
+      "updates": "",
+      "link": "",
+      "gallery": [
+        "/assets/mingbu-wuma-9/01.jpg",
+        "/assets/mingbu-wuma-9/02.jpg",
+        "/assets/mingbu-wuma-9/03.jpg",
+        "/assets/mingbu-wuma-9/04.jpg",
+        "/assets/mingbu-wuma-9/05.jpg",
+        "/assets/mingbu-wuma-9/06.jpg",
+        "/assets/mingbu-wuma-9/07.jpg"
+      ],
+      "tags": [
+        "岛国系列",
+        "岛国",
+        "日本",
+        "明步无马7V",
+        "热门"
+      ],
+      "series": "岛国系列",
+      "views": 0,
+      "date": "2026-08-09",
+      "featured": true,
+      "hot": true,
+      "price": "12",
+      "updatedAt": "2026-08-09T13:55:22.659Z"
+    },
+    {
       "id": "dachi-chezhan-008",
       "title": "8.武汉早期大尺车展22G",
       "subtitle": "店主原创全网唯一",
@@ -62,7 +95,8 @@
       "featured": true,
       "hot": true,
       "price": "12",
-      "updatedAt": "2026-08-09T13:52:12.485Z"
+      "updatedAt": "2026-08-09T13:52:12.485Z",
+      "purchaseRequired": false
     },
     {
       "id": "sweetgirl120g-033",
