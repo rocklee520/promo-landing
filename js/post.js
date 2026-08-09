@@ -4,6 +4,7 @@
     escapeAttr,
     titleWithPriceHtml,
     formatPrice,
+    thumbUrl,
     loadContent,
     trackView,
     bindSearchForm,
@@ -241,11 +242,11 @@
       ${p.updates ? `<p class="note-p">${escapeHtml(p.updates).replace(/\n/g, "<br>")}</p>` : ""}
       ${linkBlock}
       ${purchaseBlock}
-      <div class="note-gallery">
+      <div class="note-gallery" id="noteGallery">
         ${gallery
           .map(
             (src) =>
-              `<p class="note-img-wrap"><img src="${escapeAttr(src)}" alt="" loading="lazy" /></p>`
+              `<p class="note-img-wrap"><img src="${escapeAttr(thumbUrl(src, 720))}" data-full="${escapeAttr(src)}" alt="" loading="lazy" decoding="async" /></p>`
           )
           .join("")}
       </div>
@@ -256,6 +257,15 @@
         <span>${escapeHtml((p.tags || []).join(" · "))}</span>
       </div>
     `;
+    document.getElementById("noteGallery")?.addEventListener("click", (e) => {
+      const img = e.target.closest("img[data-full]");
+      if (!img) return;
+      const full = img.getAttribute("data-full");
+      if (full && img.src.indexOf("/img?") !== -1) {
+        img.src = full;
+        img.removeAttribute("data-full");
+      }
+    });
     if (paid) bindPay(p);
   }
 
