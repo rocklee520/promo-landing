@@ -16,7 +16,8 @@
     "网红系列",
     "机构系列",
     "岛国系列",
-    "TP系列"
+    "TP系列",
+    "舞蹈系列"
   ],
   "tags": [
     "全部",
@@ -25,23 +26,115 @@
     "机构系列",
     "岛国系列",
     "TP系列",
+    "舞蹈系列",
     "视频",
     "图片"
   ],
   "posts": [
     {
-      "id": "shaofu-baizhuo-002",
+      "id": "sweetgirl120g-033",
+      "title": "33.sweetgirl120G",
+      "subtitle": "台湾罗体瑜伽",
+      "cover": "/assets/sweetgirl120g-33/01.jpg",
+      "summary": "台湾罗体瑜伽",
+      "downloadNote": "本资源支持 百度盘 下载",
+      "updates": "",
+      "link": "",
+      "gallery": [
+        "/assets/sweetgirl120g-33/01.jpg",
+        "/assets/sweetgirl120g-33/02.jpg",
+        "/assets/sweetgirl120g-33/03.jpg"
+      ],
+      "tags": [
+        "舞蹈系列",
+        "舞蹈",
+        "sweetgirl",
+        "热门"
+      ],
+      "series": "舞蹈系列",
+      "views": 0,
+      "date": "2026-08-09",
+      "featured": true,
+      "hot": true,
+      "price": "15",
+      "updatedAt": "2026-08-09T13:43:56.689Z"
+    },
+    {
+      "id": "wd-01b7c6-013",
+      "title": "13.曰月俱乐部300G最全合集",
+      "subtitle": "全网绝版罗舞珍藏",
+      "cover": "/assets/wd-01b7c6-13/01.jpg",
+      "summary": "全网绝版罗舞珍藏",
+      "downloadNote": "本资源支持 百度盘 下载",
+      "updates": "",
+      "link": "",
+      "gallery": [
+        "/assets/wd-01b7c6-13/01.jpg",
+        "/assets/wd-01b7c6-13/02.jpg",
+        "/assets/wd-01b7c6-13/03.jpg"
+      ],
+      "tags": [
+        "舞蹈系列",
+        "舞蹈",
+        "曰月俱乐部300G最全合集",
+        "热门"
+      ],
+      "series": "舞蹈系列",
+      "views": 0,
+      "date": "2026-08-09",
+      "featured": true,
+      "hot": true,
+      "price": "30",
+      "updatedAt": "2026-08-09T13:43:56.689Z"
+    },
+    {
+      "id": "wushe-007",
+      "title": "7.K8舞社300G",
+      "subtitle": "稀有热门（无马高质量）",
+      "cover": "/assets/wushe-7/01.jpg",
+      "summary": "稀有热门（无马高质量）",
+      "downloadNote": "本资源支持 百度盘 下载",
+      "updates": "",
+      "link": "",
+      "gallery": [
+        "/assets/wushe-7/01.jpg",
+        "/assets/wushe-7/02.jpg",
+        "/assets/wushe-7/03.jpg",
+        "/assets/wushe-7/04.jpg",
+        "/assets/wushe-7/05.jpg",
+        "/assets/wushe-7/06.jpg",
+        "/assets/wushe-7/07.jpg",
+        "/assets/wushe-7/08.jpg",
+        "/assets/wushe-7/09.jpg",
+        "/assets/wushe-7/10.jpg"
+      ],
+      "tags": [
+        "舞蹈系列",
+        "舞蹈",
+        "K8舞社",
+        "热门"
+      ],
+      "series": "舞蹈系列",
+      "views": 0,
+      "date": "2026-08-09",
+      "featured": true,
+      "hot": true,
+      "price": "20",
+      "updatedAt": "2026-08-09T13:43:56.689Z"
+    },
+    {
+      "id": "11g-002",
       "title": "2.少付白洁11G",
       "subtitle": "真人+动画+小说+音频+无马",
-      "cover": "/assets/shaofu-baizhuo-2/01.jpg",
+      "cover": "/assets/11g-2/01.jpg",
       "summary": "真人+动画+小说+音频+无马",
       "downloadNote": "本资源支持 百度盘 下载",
       "updates": "",
       "link": "",
       "gallery": [
-        "/assets/shaofu-baizhuo-2/01.jpg",
-        "/assets/shaofu-baizhuo-2/02.jpg",
-        "/assets/shaofu-baizhuo-2/03.jpg"
+        "/assets/11g-2/01.jpg",
+        "/assets/11g-2/02.jpg",
+        "/assets/11g-2/03.jpg"
       ],
       "tags": [
         "机构系列",
@@ -50,12 +143,13 @@
         "热门"
       ],
       "series": "机构系列",
-      "views": 0,
+      "views": 1,
       "date": "2026-08-09",
       "featured": true,
       "hot": true,
       "price": "12",
-      "updatedAt": "2026-08-09T13:39:08.415Z"
+      "updatedAt": "2026-08-09T13:39:08.415Z",
+      "purchaseRequired": false
     },
     {
       "id": "madou-001",
@@ -84,7 +178,8 @@
       "featured": true,
       "hot": true,
       "price": "10",
-      "updatedAt": "2026-08-09T13:39:08.415Z"
+      "updatedAt": "2026-08-09T13:39:08.415Z",
+      "purchaseRequired": false
     },
     {
       "id": "guoge-019",
@@ -1022,6 +1117,35 @@
       "hot": true,
       "price": "8",
       "updatedAt": "2026-08-09T13:36:03.672Z",
+      "purchaseRequired": false
+    },
+    {
+      "id": "shaofu-baizhuo-002",
+      "title": "2.少付白洁11G",
+      "subtitle": "真人+动画+小说+音频+无马",
+      "cover": "/assets/shaofu-baizhuo-2/01.jpg",
+      "summary": "真人+动画+小说+音频+无马",
+      "downloadNote": "本资源支持 百度盘 下载",
+      "updates": "",
+      "link": "",
+      "gallery": [
+        "/assets/shaofu-baizhuo-2/01.jpg",
+        "/assets/shaofu-baizhuo-2/02.jpg",
+        "/assets/shaofu-baizhuo-2/03.jpg"
+      ],
+      "tags": [
+        "机构系列",
+        "机构",
+        "少付白洁",
+        "热门"
+      ],
+      "series": "机构系列",
+      "views": 0,
+      "date": "2026-08-09",
+      "featured": true,
+      "hot": true,
+      "price": "12",
+      "updatedAt": "2026-08-09T13:39:08.415Z",
       "purchaseRequired": false
     }
   ]
