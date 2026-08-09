@@ -8,7 +8,8 @@
       "wechatQr": "",
       "alipayQr": "",
       "note": "付款时请在备注/说明里填写订单号，付完回到本页点「我已付款」。"
-    }
+    },
+    "contentUpdatedAt": "2026-08-09T14:04:43Z"
   },
   "nav": [
     "全部",
@@ -60,7 +61,7 @@
         "热门"
       ],
       "series": "软件系列",
-      "views": 0,
+      "views": 1,
       "date": "2026-08-09",
       "featured": true,
       "hot": true,
@@ -717,13 +718,22 @@
     },
     {
       "id": "anaimiya-002",
+      "price": "12",
+      "series": "网红系列",
+      "hidden": false,
+      "tags": [
+        "网红系列",
+        "网红",
+        "Anaimiya",
+        "奶咪"
+      ],
+      "updatedAt": "2026-08-09T14:04:42Z",
       "title": "002. Anaimiya奶咪",
       "subtitle": "7.19补链Anaimiya奶咪 OF作品大合集 355G [持续更新]",
-      "cover": "/assets/anaimiya/01.webp",
       "summary": "极品骚货福利姬，抖音网红奶咪anaimiya-喜欢把自己当成宠物的M少女 足控COS 反差婊，of 2020-2025全收录\n\n本资源有2000+部视频，7000+张高清图片，大小355G\n\n支持 百度网盘 下载，也可使用 PikPak 在线观看与保存",
+      "cover": "/assets/anaimiya/01.webp",
       "downloadNote": "本资源支持 百度盘 下载",
       "updates": "2025.6.14更新1781v+299.5g 重新整理资源，原本资源+新增资源，统一规整在链接一内\n\n2025.7.31更新21v60p+601m 新增7月作品\n\n2025.9.22更新1v+903m 新增8月作品\n\n2025.10.22更新18v56p637m 新增9.12-10.11作品\n\n2026.2.22更新52.9G 新增 OF 2025 原版大合集，已按照1-12月按月整理好资源",
-      "link": "",
       "gallery": [
         "/assets/anaimiya/01.webp",
         "/assets/anaimiya/02.webp",
@@ -744,20 +754,7 @@
         "/assets/anaimiya/17.webp",
         "/assets/anaimiya/18.jpg"
       ],
-      "tags": [
-        "网红系列",
-        "网红",
-        "Anaimiya",
-        "热门"
-      ],
-      "series": "网红系列",
       "views": 2,
-      "date": "2026-07-19",
-      "featured": true,
-      "hot": true,
-      "price": "15",
-      "updatedAt": "2026-08-09T02:15:29.103Z",
-      "hidden": true,
       "purchaseRequired": false
     },
     {
