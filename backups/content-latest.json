@@ -10,7 +10,8 @@
     "直播系列",
     "网红系列",
     "机构系列",
-    "岛国系列"
+    "岛国系列",
+    "TP系列"
   ],
   "tags": [
     "全部",
@@ -18,10 +19,39 @@
     "网红系列",
     "机构系列",
     "岛国系列",
+    "TP系列",
     "视频",
     "图片"
   ],
   "posts": [
+    {
+      "id": "xiyu-wenquan-tp1",
+      "title": "1.洗浴温泉会所58G",
+      "subtitle": "付费素材新鲜出炉",
+      "cover": "/assets/xiyu-wenquan/01.jpg",
+      "summary": "付费素材新鲜出炉",
+      "downloadNote": "本资源支持 百度盘 下载",
+      "updates": "",
+      "link": "",
+      "gallery": [
+        "/assets/xiyu-wenquan/01.jpg",
+        "/assets/xiyu-wenquan/02.jpg",
+        "/assets/xiyu-wenquan/03.jpg"
+      ],
+      "tags": [
+        "TP系列",
+        "TP",
+        "洗浴",
+        "热门"
+      ],
+      "series": "TP系列",
+      "views": 0,
+      "date": "2026-08-09",
+      "featured": true,
+      "hot": true,
+      "price": "12",
+      "updatedAt": "2026-08-09T03:17:37.958Z"
+    },
     {
       "id": "taipeinana-008",
       "title": "008. 台北娜娜",
