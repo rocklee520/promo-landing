@@ -17,6 +17,15 @@ window.Promo = (() => {
     return /元|￥|\$|¥/.test(s) ? s : `${s}元`;
   }
 
+  /** Serve resized WebP via /img (falls back to original for remote URLs). */
+  function thumbUrl(src, width = 480) {
+    const s = String(src || "").trim();
+    if (!s) return "";
+    if (!s.startsWith("/assets/")) return s;
+    const w = Number(width) || 480;
+    return `/img?u=${encodeURIComponent(s)}&w=${w}`;
+  }
+
   /** Safe HTML: title + optional price badge */
   function titleWithPriceHtml(p) {
     const title = escapeHtml(p?.title || "");
@@ -167,6 +176,7 @@ window.Promo = (() => {
     escapeHtml,
     escapeAttr,
     formatPrice,
+    thumbUrl,
     titleWithPriceHtml,
     loadContent,
     trackView,
