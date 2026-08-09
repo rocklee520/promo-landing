@@ -7,8 +7,7 @@
     "pay": {
       "wechatQr": "",
       "alipayQr": "",
-      "note": "付款时请在备注/说明里填写订单号，付完回到本页点「我已付款」。",
-      "pushPlusToken": ""
+      "note": "付款时请在备注/说明里填写订单号，付完回到本页点「我已付款」。"
     }
   },
   "nav": [
@@ -30,6 +29,32 @@
     "图片"
   ],
   "posts": [
+    {
+      "id": "guoge-019",
+      "title": "果哥摄影作品视频40G",
+      "subtitle": "艺术气息+网红",
+      "cover": "/assets/guoge/01.jpg",
+      "summary": "艺术气息+网红",
+      "downloadNote": "本资源支持 百度盘 下载",
+      "updates": "",
+      "link": "",
+      "gallery": [
+        "/assets/guoge/01.jpg"
+      ],
+      "tags": [
+        "网红系列",
+        "网红",
+        "果哥",
+        "热门"
+      ],
+      "series": "网红系列",
+      "views": 0,
+      "date": "2026-08-09",
+      "featured": true,
+      "hot": true,
+      "price": "8",
+      "updatedAt": "2026-08-09T11:25:40.102Z"
+    },
     {
       "id": "yunatamago-018",
       "title": "YunaTamaGo 181V 38G",
@@ -54,7 +79,8 @@
       "featured": true,
       "hot": true,
       "price": "8",
-      "updatedAt": "2026-08-09T10:20:11.872Z"
+      "updatedAt": "2026-08-09T10:20:11.872Z",
+      "purchaseRequired": false
     },
     {
       "id": "yum707-038",
@@ -107,7 +133,8 @@
       "hot": true,
       "hidden": false,
       "price": "8",
-      "updatedAt": "2026-08-09T10:00:16.227Z"
+      "updatedAt": "2026-08-09T10:00:16.227Z",
+      "purchaseRequired": false
     },
     {
       "id": "pupuwaifu-007",
@@ -162,7 +189,8 @@
       "hot": true,
       "hidden": false,
       "price": "10",
-      "updatedAt": "2026-08-09T09:33:47.993Z"
+      "updatedAt": "2026-08-09T09:33:47.993Z",
+      "purchaseRequired": false
     },
     {
       "id": "sunheyi-017",
@@ -206,7 +234,8 @@
       "hot": true,
       "hidden": false,
       "price": "10",
-      "updatedAt": "2026-08-09T07:15:25.877Z"
+      "updatedAt": "2026-08-09T07:15:25.877Z",
+      "purchaseRequired": false
     },
     {
       "id": "fenjie-ks",
@@ -237,7 +266,8 @@
       "featured": true,
       "hot": true,
       "price": "7",
-      "updatedAt": "2026-08-09T03:41:01.203Z"
+      "updatedAt": "2026-08-09T03:41:01.203Z",
+      "purchaseRequired": false
     },
     {
       "id": "yuyuanya-126",
@@ -279,7 +309,8 @@
       "hot": true,
       "hidden": false,
       "price": "8",
-      "updatedAt": "2026-08-09T03:39:49.012Z"
+      "updatedAt": "2026-08-09T03:39:49.012Z",
+      "purchaseRequired": false
     },
     {
       "id": "lilizi-012",
@@ -312,7 +343,8 @@
       "featured": true,
       "hot": true,
       "price": "8",
-      "updatedAt": "2026-08-09T03:22:36.662Z"
+      "updatedAt": "2026-08-09T03:22:36.662Z",
+      "purchaseRequired": false
     },
     {
       "id": "taipeinana-008",
@@ -352,7 +384,8 @@
       "hot": true,
       "hidden": false,
       "price": "20",
-      "updatedAt": "2026-08-09T02:22:37.258Z"
+      "updatedAt": "2026-08-09T02:22:37.258Z",
+      "purchaseRequired": false
     },
     {
       "id": "fc2-gaoyanzhi-dg1",
@@ -380,7 +413,8 @@
       "featured": true,
       "hot": true,
       "price": "12",
-      "updatedAt": "2026-08-08T16:26:24.049Z"
+      "updatedAt": "2026-08-08T16:26:24.049Z",
+      "purchaseRequired": false
     },
     {
       "id": "hangse-jg5",
@@ -409,7 +443,8 @@
       "featured": true,
       "hot": true,
       "price": "30",
-      "updatedAt": "2026-08-08T16:22:43.987Z"
+      "updatedAt": "2026-08-08T16:22:43.987Z",
+      "purchaseRequired": false
     },
     {
       "id": "pansihuayuan-jg3",
@@ -438,7 +473,8 @@
       "featured": true,
       "hot": true,
       "price": "15",
-      "updatedAt": "2026-08-08T14:20:45.424Z"
+      "updatedAt": "2026-08-08T14:20:45.424Z",
+      "purchaseRequired": false
     },
     {
       "id": "suchang-wh4",
@@ -470,7 +506,8 @@
       "featured": true,
       "hot": true,
       "price": "15",
-      "updatedAt": "2026-08-08T14:11:57.545Z"
+      "updatedAt": "2026-08-08T14:11:57.545Z",
+      "purchaseRequired": false
     },
     {
       "id": "kunkungou-001",
@@ -506,7 +543,8 @@
       "hot": true,
       "price": "12",
       "updatedAt": "2026-08-09T02:19:59.999Z",
-      "hidden": false
+      "hidden": false,
+      "purchaseRequired": false
     },
     {
       "id": "anaimiya-002",
@@ -550,7 +588,8 @@
       "hot": true,
       "price": "15",
       "updatedAt": "2026-08-09T02:15:29.103Z",
-      "hidden": true
+      "hidden": true,
+      "purchaseRequired": false
     },
     {
       "id": "asia-lynn-003",
@@ -592,7 +631,8 @@
       "hot": true,
       "price": "25",
       "updatedAt": "2026-08-09T02:15:29.103Z",
-      "hidden": true
+      "hidden": true,
+      "purchaseRequired": false
     },
     {
       "id": "xinyouli-004",
@@ -637,7 +677,8 @@
       "hot": true,
       "price": "12",
       "updatedAt": "2026-08-09T02:15:29.103Z",
-      "hidden": true
+      "hidden": true,
+      "purchaseRequired": false
     },
     {
       "id": "tuzaibaby-102",
@@ -673,7 +714,8 @@
       "hot": true,
       "price": "12",
       "updatedAt": "2026-08-09T02:15:29.103Z",
-      "hidden": true
+      "hidden": true,
+      "purchaseRequired": false
     },
     {
       "id": "kiki-098",
@@ -710,12 +752,13 @@
         "热门"
       ],
       "series": "直播系列",
-      "views": 16,
+      "views": 17,
       "date": "2026-07-24",
       "featured": true,
       "hot": true,
       "price": "20",
-      "updatedAt": "2026-08-09T02:15:29.103Z"
+      "updatedAt": "2026-08-09T02:15:29.103Z",
+      "purchaseRequired": false
     },
     {
       "id": "xiyu-wenquan-tp1",
@@ -743,7 +786,8 @@
       "featured": true,
       "hot": true,
       "price": "12",
-      "updatedAt": "2026-08-09T03:17:37.958Z"
+      "updatedAt": "2026-08-09T03:17:37.958Z",
+      "purchaseRequired": false
     },
     {
       "id": "kittyxkum-031",
@@ -798,7 +842,8 @@
       "hot": true,
       "hidden": false,
       "price": "12",
-      "updatedAt": "2026-08-09T03:22:34.883Z"
+      "updatedAt": "2026-08-09T03:22:34.883Z",
+      "purchaseRequired": false
     }
   ]
 }
