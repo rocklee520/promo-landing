@@ -30,93 +30,32 @@
   ],
   "posts": [
     {
-      "id": "niannian-022",
-      "title": "22.年年80G",
-      "subtitle": "古风画册无敌颜值",
-      "cover": "/assets/niannian-22/01.jpg",
-      "summary": "古风画册无敌颜值",
+      "id": "litu-011",
+      "title": "11.丽图58G",
+      "subtitle": "国内首套人像摄影（全罗无马）",
+      "cover": "/assets/litu-11/01.jpg",
+      "summary": "国内首套人像摄影（全罗无马）",
       "downloadNote": "本资源支持 百度盘 下载",
       "updates": "",
       "link": "",
       "gallery": [
-        "/assets/niannian-22/01.jpg",
-        "/assets/niannian-22/02.jpg",
-        "/assets/niannian-22/03.jpg",
-        "/assets/niannian-22/04.jpg"
+        "/assets/litu-11/01.jpg",
+        "/assets/litu-11/02.jpg",
+        "/assets/litu-11/03.jpg"
       ],
       "tags": [
-        "网红系列",
-        "网红",
-        "年年",
+        "机构系列",
+        "机构",
+        "丽图",
         "热门"
       ],
-      "series": "网红系列",
+      "series": "机构系列",
       "views": 0,
       "date": "2026-08-09",
       "featured": true,
       "hot": true,
-      "price": "10",
-      "updatedAt": "2026-08-09T13:36:03.672Z"
-    },
-    {
-      "id": "nina-100g-021",
-      "title": "21.nina妈妈100G",
-      "subtitle": "韵味少服",
-      "cover": "/assets/nina-100g-21/01.jpg",
-      "summary": "韵味少服",
-      "downloadNote": "本资源支持 百度盘 下载",
-      "updates": "",
-      "link": "",
-      "gallery": [
-        "/assets/nina-100g-21/01.jpg",
-        "/assets/nina-100g-21/02.jpg",
-        "/assets/nina-100g-21/03.jpg",
-        "/assets/nina-100g-21/04.jpg"
-      ],
-      "tags": [
-        "网红系列",
-        "网红",
-        "nina妈妈",
-        "热门"
-      ],
-      "series": "网红系列",
-      "views": 0,
-      "date": "2026-08-09",
-      "featured": true,
-      "hot": true,
-      "price": "10",
-      "updatedAt": "2026-08-09T13:36:03.672Z"
-    },
-    {
-      "id": "xiayuhe-020",
-      "title": "20.夏雨荷37G",
-      "subtitle": "4K画质麻逗极品",
-      "cover": "/assets/xiayuhe-20/01.jpg",
-      "summary": "4K画质麻逗极品",
-      "downloadNote": "本资源支持 百度盘 下载",
-      "updates": "",
-      "link": "",
-      "gallery": [
-        "/assets/xiayuhe-20/01.jpg",
-        "/assets/xiayuhe-20/02.jpg",
-        "/assets/xiayuhe-20/03.jpg",
-        "/assets/xiayuhe-20/04.jpg",
-        "/assets/xiayuhe-20/05.jpg",
-        "/assets/xiayuhe-20/06.jpg"
-      ],
-      "tags": [
-        "网红系列",
-        "网红",
-        "夏雨荷",
-        "热门"
-      ],
-      "series": "网红系列",
-      "views": 0,
-      "date": "2026-08-09",
-      "featured": true,
-      "hot": true,
-      "price": "8",
-      "updatedAt": "2026-08-09T13:36:03.672Z"
+      "price": "12",
+      "updatedAt": "2026-08-09T13:37:52.229Z"
     },
     {
       "id": "guoge-019",
@@ -933,6 +872,98 @@
       "hidden": false,
       "price": "12",
       "updatedAt": "2026-08-09T03:22:34.883Z",
+      "purchaseRequired": false
+    },
+    {
+      "id": "niannian-022",
+      "title": "22.年年80G",
+      "subtitle": "古风画册无敌颜值",
+      "cover": "/assets/niannian-22/01.jpg",
+      "summary": "古风画册无敌颜值",
+      "downloadNote": "本资源支持 百度盘 下载",
+      "updates": "",
+      "link": "",
+      "gallery": [
+        "/assets/niannian-22/01.jpg",
+        "/assets/niannian-22/02.jpg",
+        "/assets/niannian-22/03.jpg",
+        "/assets/niannian-22/04.jpg"
+      ],
+      "tags": [
+        "网红系列",
+        "网红",
+        "年年",
+        "热门"
+      ],
+      "series": "网红系列",
+      "views": 0,
+      "date": "2026-08-09",
+      "featured": true,
+      "hot": true,
+      "price": "10",
+      "updatedAt": "2026-08-09T13:36:03.672Z",
+      "purchaseRequired": false
+    },
+    {
+      "id": "nina-100g-021",
+      "title": "21.nina妈妈100G",
+      "subtitle": "韵味少服",
+      "cover": "/assets/nina-100g-21/01.jpg",
+      "summary": "韵味少服",
+      "downloadNote": "本资源支持 百度盘 下载",
+      "updates": "",
+      "link": "",
+      "gallery": [
+        "/assets/nina-100g-21/01.jpg",
+        "/assets/nina-100g-21/02.jpg",
+        "/assets/nina-100g-21/03.jpg",
+        "/assets/nina-100g-21/04.jpg"
+      ],
+      "tags": [
+        "网红系列",
+        "网红",
+        "nina妈妈",
+        "热门"
+      ],
+      "series": "网红系列",
+      "views": 0,
+      "date": "2026-08-09",
+      "featured": true,
+      "hot": true,
+      "price": "10",
+      "updatedAt": "2026-08-09T13:36:03.672Z",
+      "purchaseRequired": false
+    },
+    {
+      "id": "xiayuhe-020",
+      "title": "20.夏雨荷37G",
+      "subtitle": "4K画质麻逗极品",
+      "cover": "/assets/xiayuhe-20/01.jpg",
+      "summary": "4K画质麻逗极品",
+      "downloadNote": "本资源支持 百度盘 下载",
+      "updates": "",
+      "link": "",
+      "gallery": [
+        "/assets/xiayuhe-20/01.jpg",
+        "/assets/xiayuhe-20/02.jpg",
+        "/assets/xiayuhe-20/03.jpg",
+        "/assets/xiayuhe-20/04.jpg",
+        "/assets/xiayuhe-20/05.jpg",
+        "/assets/xiayuhe-20/06.jpg"
+      ],
+      "tags": [
+        "网红系列",
+        "网红",
+        "夏雨荷",
+        "热门"
+      ],
+      "series": "网红系列",
+      "views": 0,
+      "date": "2026-08-09",
+      "featured": true,
+      "hot": true,
+      "price": "8",
+      "updatedAt": "2026-08-09T13:36:03.672Z",
       "purchaseRequired": false
     }
   ]
