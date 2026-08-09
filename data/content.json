@@ -1,6 +1,6 @@
 {
   "site": {
-    "name": "小米素材站",
+    "name": "更新速递",
     "subtitle": "最新视频 / 图片预览与介绍",
     "footer": "内容由站长更新维护 · 点击条目查看详情",
     "adminPassword": ""
@@ -24,6 +24,32 @@
     "图片"
   ],
   "posts": [
+    {
+      "id": "yunatamago-018",
+      "title": "YunaTamaGo 181V 38G",
+      "subtitle": "onlyfans头牌",
+      "cover": "/assets/yunatamago/01.jpg",
+      "summary": "onlyfans头牌",
+      "downloadNote": "本资源支持 百度盘 下载",
+      "updates": "",
+      "link": "",
+      "gallery": [
+        "/assets/yunatamago/01.jpg"
+      ],
+      "tags": [
+        "网红系列",
+        "网红",
+        "YunaTamaGo",
+        "热门"
+      ],
+      "series": "网红系列",
+      "views": 0,
+      "date": "2026-08-09",
+      "featured": true,
+      "hot": true,
+      "price": "8",
+      "updatedAt": "2026-08-09T10:16:47.138Z"
+    },
     {
       "id": "yum707-038",
       "title": "038. yum_707",
