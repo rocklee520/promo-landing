@@ -17,9 +17,8 @@
     "机构系列",
     "岛国系列",
     "TP系列",
-    "舞蹈系列",
     "软件系列",
-    "AI系列"
+    "舞蹈系列"
   ],
   "tags": [
     "全部",
@@ -28,38 +27,67 @@
     "机构系列",
     "岛国系列",
     "TP系列",
-    "舞蹈系列",
     "软件系列",
-    "AI系列",
+    "舞蹈系列",
     "视频",
     "图片"
   ],
   "posts": [
     {
-      "id": "luowu-003",
-      "title": "3.ai罗舞",
-      "subtitle": "ai罗舞",
-      "cover": "/assets/luowu-3/01.jpg",
-      "summary": "ai罗舞",
+      "id": "douyin-juqing-024",
+      "title": "24.抖音风剧情版117G",
+      "subtitle": "各种场景各种剧情",
+      "cover": "/assets/douyin-juqing-24/01.jpg",
+      "summary": "各种场景各种剧情",
       "downloadNote": "本资源支持 百度盘 下载",
       "updates": "",
       "link": "",
       "gallery": [
-        "/assets/luowu-3/01.jpg"
+        "/assets/douyin-juqing-24/01.jpg",
+        "/assets/douyin-juqing-24/02.jpg",
+        "/assets/douyin-juqing-24/03.jpg"
       ],
       "tags": [
-        "AI系列",
-        "AI",
-        "ai罗舞",
+        "网红系列",
+        "网红",
+        "抖音风剧情版",
         "热门"
       ],
-      "series": "AI系列",
+      "series": "网红系列",
       "views": 0,
       "date": "2026-08-09",
       "featured": true,
       "hot": true,
-      "price": "",
-      "updatedAt": "2026-08-09T13:58:55.708Z"
+      "price": "10",
+      "updatedAt": "2026-08-09T14:01:13.919Z"
+    },
+    {
+      "id": "penshui-001",
+      "title": "1.喷水女娃85G",
+      "subtitle": "长腿喷水无马",
+      "cover": "/assets/penshui-1/01.jpg",
+      "summary": "长腿喷水无马",
+      "downloadNote": "本资源支持 百度盘 下载",
+      "updates": "",
+      "link": "",
+      "gallery": [
+        "/assets/penshui-1/01.jpg",
+        "/assets/penshui-1/02.jpg",
+        "/assets/penshui-1/03.jpg"
+      ],
+      "tags": [
+        "网红系列",
+        "网红",
+        "喷水女娃",
+        "热门"
+      ],
+      "series": "网红系列",
+      "views": 0,
+      "date": "2026-08-09",
+      "featured": true,
+      "hot": true,
+      "price": "10",
+      "updatedAt": "2026-08-09T14:01:13.919Z"
     },
     {
       "id": "anzhuo-shenqi-006",
@@ -1311,6 +1339,33 @@
       "hot": true,
       "price": "12",
       "updatedAt": "2026-08-09T13:55:22.659Z",
+      "purchaseRequired": false
+    },
+    {
+      "id": "luowu-003",
+      "title": "3.ai罗舞",
+      "subtitle": "ai罗舞",
+      "cover": "/assets/luowu-3/01.jpg",
+      "summary": "ai罗舞",
+      "downloadNote": "本资源支持 百度盘 下载",
+      "updates": "",
+      "link": "",
+      "gallery": [
+        "/assets/luowu-3/01.jpg"
+      ],
+      "tags": [
+        "AI系列",
+        "AI",
+        "ai罗舞",
+        "热门"
+      ],
+      "series": "AI系列",
+      "views": 0,
+      "date": "2026-08-09",
+      "featured": true,
+      "hot": true,
+      "price": "",
+      "updatedAt": "2026-08-09T13:58:55.708Z",
       "purchaseRequired": false
     }
   ]
