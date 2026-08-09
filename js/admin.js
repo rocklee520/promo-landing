@@ -219,12 +219,15 @@
 
   async function saveAll() {
     readSiteForm();
+    data.site = data.site || {};
+    data.site.contentUpdatedAt = new Date().toISOString();
     const newPwd = $("cfgPassword").value.trim();
     const res = await fetch("/api/content", {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
         "X-Admin-Password": password,
+        "X-Content-Source": "admin",
       },
       body: JSON.stringify(data),
     });
