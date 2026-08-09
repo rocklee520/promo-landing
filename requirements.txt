@@ -1,1 +1,1 @@
-# No third-party deps; stdlib only
+Pillow>=10.0.0
