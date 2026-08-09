@@ -117,7 +117,7 @@ window.Promo = (() => {
     const nameEl = document.getElementById("siteName");
     const subEl = document.getElementById("siteSub");
     const footEl = document.getElementById("siteFooter");
-    if (nameEl) nameEl.textContent = site.name || "更新速递";
+    if (nameEl) nameEl.textContent = site.name || "小米素材站";
     if (subEl) subEl.textContent = site.subtitle || "";
     if (footEl) footEl.textContent = site.footer || "";
     document.title = document.title.includes("搜索")

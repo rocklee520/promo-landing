@@ -21,7 +21,7 @@
 
   function ensureShape() {
     data.site ||= {
-      name: "更新速递",
+      name: "小米素材站",
       subtitle: "最新视频 / 图片预览与介绍",
       footer: "",
       adminPassword: "admin123",
@@ -73,7 +73,7 @@
   }
 
   function readSiteForm() {
-    data.site.name = $("cfgName").value.trim() || "更新速递";
+    data.site.name = $("cfgName").value.trim() || "小米素材站";
     data.site.subtitle = $("cfgSub").value.trim();
     data.site.footer = $("cfgFooter").value.trim();
     const newPwd = $("cfgPassword").value.trim();
