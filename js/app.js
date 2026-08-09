@@ -73,9 +73,9 @@
     state.slide = Math.min(state.slide, list.length - 1);
     els.carouselTrack.innerHTML = list
       .map(
-        (p) => `
+        (p, i) => `
         <a class="carousel-slide" href="${escapeAttr(postHref(p))}" target="${postTarget(p)}" rel="noopener noreferrer">
-          <img src="${escapeAttr(p.cover || "")}" alt="${escapeAttr(p.title || "")}" loading="lazy" />
+          <img src="${escapeAttr(p.cover || "")}" alt="${escapeAttr(p.title || "")}" ${i === 0 ? 'fetchpriority="high"' : 'loading="lazy"'} />
           <div class="carousel-caption"><h2>${titleWithPriceHtml(p)}</h2></div>
         </a>`
       )
@@ -210,7 +210,7 @@
     renderCarousel();
   });
 
-  loadContent()
+  loadContent({ lite: true })
     .then((data) => {
       state.data = data;
       renderAll();
