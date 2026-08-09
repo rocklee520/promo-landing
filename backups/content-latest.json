@@ -18,7 +18,8 @@
     "岛国系列",
     "TP系列",
     "舞蹈系列",
-    "软件系列"
+    "软件系列",
+    "AI系列"
   ],
   "tags": [
     "全部",
@@ -29,10 +30,37 @@
     "TP系列",
     "舞蹈系列",
     "软件系列",
+    "AI系列",
     "视频",
     "图片"
   ],
   "posts": [
+    {
+      "id": "luowu-003",
+      "title": "3.ai罗舞",
+      "subtitle": "ai罗舞",
+      "cover": "/assets/luowu-3/01.jpg",
+      "summary": "ai罗舞",
+      "downloadNote": "本资源支持 百度盘 下载",
+      "updates": "",
+      "link": "",
+      "gallery": [
+        "/assets/luowu-3/01.jpg"
+      ],
+      "tags": [
+        "AI系列",
+        "AI",
+        "ai罗舞",
+        "热门"
+      ],
+      "series": "AI系列",
+      "views": 0,
+      "date": "2026-08-09",
+      "featured": true,
+      "hot": true,
+      "price": "",
+      "updatedAt": "2026-08-09T13:58:55.708Z"
+    },
     {
       "id": "anzhuo-shenqi-006",
       "title": "6.安卓神器（软件）",
@@ -65,7 +93,8 @@
       "featured": true,
       "hot": true,
       "price": "58",
-      "updatedAt": "2026-08-09T13:57:05.222Z"
+      "updatedAt": "2026-08-09T13:57:05.222Z",
+      "purchaseRequired": false
     },
     {
       "id": "dachi-chezhan-008",
