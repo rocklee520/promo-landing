@@ -73,10 +73,18 @@ window.Promo = (() => {
     return href.startsWith("http") ? "_blank" : "_self";
   }
 
+  function isPublicPost(p) {
+    return Boolean(p) && !p.hidden;
+  }
+
+  function publicPosts(posts) {
+    return (Array.isArray(posts) ? posts : []).filter(isPublicPost);
+  }
+
   function searchPosts(posts, keyword) {
     const q = String(keyword || "").trim().toLowerCase();
     if (!q) return [];
-    return posts.filter((p) => {
+    return publicPosts(posts).filter((p) => {
       const hay = [
         p.title,
         p.subtitle,
@@ -143,6 +151,8 @@ window.Promo = (() => {
     trackView,
     postHref,
     postTarget,
+    isPublicPost,
+    publicPosts,
     searchPosts,
     bindSearchForm,
     renderSiteChrome,

@@ -49,9 +49,9 @@
   loadContent()
     .then(async (data) => {
       const post = (data.posts || []).find((p) => p.id === id);
-      if (!post) {
+      if (!post || post.hidden) {
         renderSiteChrome(data, { activeNav: "全部" });
-        root.innerHTML = `<div class="empty">未找到内容。<a href="/">返回首页</a></div>`;
+        root.innerHTML = `<div class="empty">${post?.hidden ? "该内容已下架。" : "未找到内容。"} <a href="/">返回首页</a></div>`;
         return;
       }
       renderSiteChrome(data, { activeNav: post.series || "全部" });

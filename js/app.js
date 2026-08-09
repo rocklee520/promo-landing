@@ -34,7 +34,7 @@
   bindSearchForm(document.getElementById("searchForm"));
 
   function posts() {
-    return Array.isArray(state.data?.posts) ? state.data.posts.slice() : [];
+    return window.Promo.publicPosts(state.data?.posts);
   }
 
   function inSeries(p, series) {

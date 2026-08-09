@@ -57,7 +57,7 @@
         <div class="admin-post" data-id="${escapeAttr(p.id)}">
           <img src="${escapeAttr(p.cover || "")}" alt="" />
           <div>
-            <h4>${escapeHtml(p.title || "未命名")}${p.price ? ` <span class="price-tag">${escapeHtml(String(p.price).includes("元") ? p.price : p.price + "元")}</span>` : ""}</h4>
+            <h4>${escapeHtml(p.title || "未命名")}${p.price ? ` <span class="price-tag">${escapeHtml(String(p.price).includes("元") ? p.price : p.price + "元")}</span>` : ""}${p.hidden ? ` <span class="pill">已下架</span>` : ""}</h4>
             <p>${escapeHtml((p.tags || []).join(" / "))} · ${escapeHtml(p.date || "")} · ${Number(p.views || 0)} 浏览</p>
           </div>
           <div class="admin-actions">
@@ -115,6 +115,7 @@
     $("editDate").value = p.date || new Date().toISOString().slice(0, 10);
     $("editViews").value = Number(p.views || 0);
     $("editFlags").value = selectFromFlags(p);
+    if ($("editHidden")) $("editHidden").checked = Boolean(p.hidden);
   }
 
   function resetForm() {
@@ -132,6 +133,7 @@
     $("editDate").value = new Date().toISOString().slice(0, 10);
     $("editViews").value = "0";
     $("editFlags").value = "none";
+    if ($("editHidden")) $("editHidden").checked = false;
   }
 
   function upsertFromForm() {
@@ -166,6 +168,7 @@
       views: Number($("editViews").value || 0),
       featured: flags.featured,
       hot: flags.hot,
+      hidden: Boolean($("editHidden")?.checked),
       updatedAt: new Date().toISOString(),
     };
     const idx = data.posts.findIndex((p) => p.id === id);

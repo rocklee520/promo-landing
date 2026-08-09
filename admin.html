@@ -77,15 +77,21 @@
             <label>日期<input id="editDate" type="date" /></label>
             <label>浏览数<input id="editViews" type="number" min="0" value="0" /></label>
           </div>
-          <label>
-            标记
-            <select id="editFlags">
-              <option value="none">普通</option>
-              <option value="featured">仅轮播</option>
-              <option value="hot">仅热门</option>
-              <option value="both">轮播 + 热门</option>
-            </select>
-          </label>
+          <div class="row-2">
+            <label>
+              标记
+              <select id="editFlags">
+                <option value="none">普通</option>
+                <option value="featured">仅轮播</option>
+                <option value="hot">仅热门</option>
+                <option value="both">轮播 + 热门</option>
+              </select>
+            </label>
+            <label class="check-label">
+              <span>下架（前台不显示）</span>
+              <input id="editHidden" type="checkbox" />
+            </label>
+          </div>
         </div>
         <div class="admin-actions">
           <button class="btn btn-primary" id="upsertBtn">写入列表</button>

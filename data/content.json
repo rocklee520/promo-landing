@@ -173,7 +173,8 @@
       "featured": true,
       "hot": true,
       "price": "12",
-      "updatedAt": "2026-08-08T02:45:14.228Z"
+      "updatedAt": "2026-08-09T02:15:29.103Z",
+      "hidden": true
     },
     {
       "id": "anaimiya-002",
@@ -216,7 +217,8 @@
       "featured": true,
       "hot": true,
       "price": "15",
-      "updatedAt": "2026-08-08T02:45:14.228Z"
+      "updatedAt": "2026-08-09T02:15:29.103Z",
+      "hidden": true
     },
     {
       "id": "asia-lynn-003",
@@ -257,7 +259,8 @@
       "featured": true,
       "hot": true,
       "price": "25",
-      "updatedAt": "2026-08-08T02:45:14.228Z"
+      "updatedAt": "2026-08-09T02:15:29.103Z",
+      "hidden": true
     },
     {
       "id": "xinyouli-004",
@@ -301,7 +304,8 @@
       "featured": true,
       "hot": true,
       "price": "12",
-      "updatedAt": "2026-08-08T02:03:00.093Z"
+      "updatedAt": "2026-08-09T02:15:29.103Z",
+      "hidden": true
     },
     {
       "id": "tuzaibaby-102",
@@ -336,7 +340,8 @@
       "featured": true,
       "hot": true,
       "price": "12",
-      "updatedAt": "2026-08-08T01:54:33.381Z"
+      "updatedAt": "2026-08-09T02:15:29.103Z",
+      "hidden": true
     },
     {
       "id": "kiki-098",
@@ -377,8 +382,8 @@
       "date": "2026-07-24",
       "featured": true,
       "hot": true,
-      "price": "30",
-      "updatedAt": "2026-08-08T01:54:25.139Z"
+      "price": "20",
+      "updatedAt": "2026-08-09T02:15:29.103Z"
     }
   ]
 }
