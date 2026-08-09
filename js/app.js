@@ -100,8 +100,16 @@
     }, 4500);
   }
 
+  function extractSize(p) {
+    const hay = [p.subtitle, p.summary, p.title].filter(Boolean).join(" ");
+    const m = hay.match(/(\d+(?:\.\d+)?)\s*([GgTt])[Bb]?/);
+    if (!m) return "";
+    const unit = m[2].toUpperCase() === "T" ? "TB" : "GB";
+    return `${m[1]}${unit}`;
+  }
+
   function rankedPosts() {
-    // 热门推荐 / 最多浏览：都按真实浏览量排序
+    // 热门排行：按真实浏览量
     let list = posts().filter((p) => inSeries(p, seriesParam));
     if (state.rankMode === "newest") {
       list.sort((a, b) => String(b.date || "").localeCompare(String(a.date || "")));
@@ -112,7 +120,7 @@
         return String(b.date || "").localeCompare(String(a.date || ""));
       });
     }
-    return list.slice(0, 8);
+    return list.slice(0, 12);
   }
 
   function renderRank() {
@@ -121,18 +129,22 @@
       els.rankList.innerHTML = '<div class="empty">暂无排行内容</div>';
       return;
     }
+    const eye = `<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 5c-5 0-9.3 3.1-11 7 1.7 3.9 6 7 11 7s9.3-3.1 11-7c-1.7-3.9-6-7-11-7zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-2.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z"/></svg>`;
     els.rankList.innerHTML = list
-      .map(
-        (p, i) => `
-        <a class="rank-item" href="${escapeAttr(postHref(p))}" target="${postTarget(p)}" rel="noopener noreferrer">
-          <div class="rank-no">${String(i + 1).padStart(2, "0")}</div>
-          <img src="${escapeAttr(p.cover || "")}" alt="" loading="lazy" />
-          <div class="rank-meta">
+      .map((p) => {
+        const size = extractSize(p);
+        return `
+        <a class="rank-card" href="${escapeAttr(postHref(p))}" target="${postTarget(p)}" rel="noopener noreferrer">
+          <div class="rank-card-cover"><img src="${escapeAttr(p.cover || "")}" alt="" loading="lazy" /></div>
+          <div class="rank-card-body">
             <h4>${titleWithPriceHtml(p)}</h4>
-            <p>${escapeHtml((p.tags || []).slice(0, 2).join(" · ") || "未分类")} · ${Number(p.views || 0)} 浏览</p>
+            <div class="rank-card-meta">
+              <span class="views">${eye}${Number(p.views || 0)}</span>
+              ${size ? `<span>${escapeHtml(size)}</span>` : `<span></span>`}
+            </div>
           </div>
-        </a>`
-      )
+        </a>`;
+      })
       .join("");
   }
 
@@ -157,18 +169,21 @@
       return;
     }
     els.postList.innerHTML = list
-      .map(
-        (p) => `
+      .map((p) => {
+        const size = extractSize(p);
+        return `
         <a class="post-card" href="${escapeAttr(postHref(p))}" target="${postTarget(p)}" rel="noopener noreferrer">
           <div class="post-cover"><img src="${escapeAttr(p.cover || "")}" alt="" loading="lazy" /></div>
           <div class="post-body">
-            <div class="post-tags">${(p.tags || []).map((t) => `<span class="pill">${escapeHtml(t)}</span>`).join("")}</div>
             <h3>${titleWithPriceHtml(p)}</h3>
             <p class="post-summary">${escapeHtml(p.subtitle || p.summary || "")}</p>
-            <div class="post-foot"><span>${escapeHtml(p.date || "")}</span><span>${Number(p.views || 0)} 浏览</span></div>
+            <div class="post-foot">
+              <span>${Number(p.views || 0)} 浏览</span>
+              <span>${size ? escapeHtml(size) : escapeHtml(p.date || "")}</span>
+            </div>
           </div>
-        </a>`
-      )
+        </a>`;
+      })
       .join("");
   }
 
