@@ -87,7 +87,8 @@
       "featured": true,
       "hot": true,
       "price": "268",
-      "updatedAt": "2026-08-09T15:03:19.053Z"
+      "updatedAt": "2026-08-09T15:03:19.053Z",
+      "purchaseRequired": false
     },
     {
       "id": "fq-b",
@@ -142,7 +143,8 @@
       "featured": true,
       "hot": true,
       "price": "50",
-      "updatedAt": "2026-08-09T15:03:19.053Z"
+      "updatedAt": "2026-08-09T15:03:19.053Z",
+      "purchaseRequired": false
     },
     {
       "id": "fq-c",
@@ -199,7 +201,8 @@
       "featured": true,
       "hot": true,
       "price": "50",
-      "updatedAt": "2026-08-09T15:03:19.053Z"
+      "updatedAt": "2026-08-09T15:03:19.053Z",
+      "purchaseRequired": false
     },
     {
       "id": "fq-d",
@@ -260,7 +263,8 @@
       "featured": true,
       "hot": true,
       "price": "50",
-      "updatedAt": "2026-08-09T15:03:19.053Z"
+      "updatedAt": "2026-08-09T15:03:19.053Z",
+      "purchaseRequired": false
     },
     {
       "id": "fq-e",
@@ -318,7 +322,8 @@
       "featured": true,
       "hot": true,
       "price": "50",
-      "updatedAt": "2026-08-09T15:03:19.053Z"
+      "updatedAt": "2026-08-09T15:03:19.053Z",
+      "purchaseRequired": false
     },
     {
       "id": "fq-f",
@@ -381,7 +386,8 @@
       "featured": true,
       "hot": true,
       "price": "50",
-      "updatedAt": "2026-08-09T15:03:19.053Z"
+      "updatedAt": "2026-08-09T15:03:19.053Z",
+      "purchaseRequired": false
     },
     {
       "id": "fq-g",
@@ -438,7 +444,8 @@
       "featured": true,
       "hot": true,
       "price": "50",
-      "updatedAt": "2026-08-09T15:03:19.053Z"
+      "updatedAt": "2026-08-09T15:03:19.053Z",
+      "purchaseRequired": false
     },
     {
       "id": "fq-h",
@@ -511,7 +518,8 @@
       "featured": true,
       "hot": true,
       "price": "50",
-      "updatedAt": "2026-08-09T15:03:19.053Z"
+      "updatedAt": "2026-08-09T15:03:19.053Z",
+      "purchaseRequired": false
     },
     {
       "id": "fq-i",
@@ -581,7 +589,8 @@
       "featured": true,
       "hot": true,
       "price": "50",
-      "updatedAt": "2026-08-09T15:03:19.053Z"
+      "updatedAt": "2026-08-09T15:03:19.053Z",
+      "purchaseRequired": false
     },
     {
       "id": "fq-j",
@@ -638,7 +647,8 @@
       "featured": true,
       "hot": true,
       "price": "50",
-      "updatedAt": "2026-08-09T15:03:19.053Z"
+      "updatedAt": "2026-08-09T15:03:19.053Z",
+      "purchaseRequired": false
     },
     {
       "id": "fq-k",
@@ -686,7 +696,8 @@
       "featured": true,
       "hot": true,
       "price": "50",
-      "updatedAt": "2026-08-09T15:03:19.053Z"
+      "updatedAt": "2026-08-09T15:03:19.053Z",
+      "purchaseRequired": false
     },
     {
       "id": "fq-l",
@@ -879,7 +890,8 @@
       "featured": true,
       "hot": true,
       "price": "50",
-      "updatedAt": "2026-08-09T15:03:19.053Z"
+      "updatedAt": "2026-08-09T15:03:19.053Z",
+      "purchaseRequired": false
     },
     {
       "id": "fq-m",
@@ -927,7 +939,8 @@
       "featured": true,
       "hot": true,
       "price": "50",
-      "updatedAt": "2026-08-09T15:03:19.053Z"
+      "updatedAt": "2026-08-09T15:03:19.053Z",
+      "purchaseRequired": false
     },
     {
       "id": "fq-n",
@@ -1095,7 +1108,8 @@
       "featured": true,
       "hot": true,
       "price": "50",
-      "updatedAt": "2026-08-09T15:03:19.053Z"
+      "updatedAt": "2026-08-09T15:03:19.053Z",
+      "purchaseRequired": false
     },
     {
       "id": "fq-o",
@@ -1133,7 +1147,8 @@
       "featured": true,
       "hot": true,
       "price": "50",
-      "updatedAt": "2026-08-09T15:03:19.053Z"
+      "updatedAt": "2026-08-09T15:03:19.053Z",
+      "purchaseRequired": false
     },
     {
       "id": "fq-p",
@@ -1182,7 +1197,8 @@
       "featured": true,
       "hot": true,
       "price": "50",
-      "updatedAt": "2026-08-09T15:03:19.053Z"
+      "updatedAt": "2026-08-09T15:03:19.053Z",
+      "purchaseRequired": false
     },
     {
       "id": "fq-q",
@@ -1240,7 +1256,8 @@
       "featured": true,
       "hot": true,
       "price": "50",
-      "updatedAt": "2026-08-09T15:03:19.053Z"
+      "updatedAt": "2026-08-09T15:03:19.053Z",
+      "purchaseRequired": false
     },
     {
       "id": "fq-r",
@@ -1284,7 +1301,8 @@
       "featured": true,
       "hot": true,
       "price": "50",
-      "updatedAt": "2026-08-09T15:03:19.053Z"
+      "updatedAt": "2026-08-09T15:03:19.053Z",
+      "purchaseRequired": false
     },
     {
       "id": "fq-s",
@@ -1320,7 +1338,8 @@
       "featured": true,
       "hot": true,
       "price": "50",
-      "updatedAt": "2026-08-09T15:03:19.053Z"
+      "updatedAt": "2026-08-09T15:03:19.053Z",
+      "purchaseRequired": false
     },
     {
       "id": "fq-t",
@@ -1357,7 +1376,8 @@
       "featured": true,
       "hot": true,
       "price": "50",
-      "updatedAt": "2026-08-09T15:03:19.053Z"
+      "updatedAt": "2026-08-09T15:03:19.053Z",
+      "purchaseRequired": false
     },
     {
       "id": "fq-u",
@@ -1411,7 +1431,8 @@
       "featured": true,
       "hot": true,
       "price": "50",
-      "updatedAt": "2026-08-09T15:03:19.053Z"
+      "updatedAt": "2026-08-09T15:03:19.053Z",
+      "purchaseRequired": false
     },
     {
       "id": "fq-v",
@@ -1462,7 +1483,8 @@
       "featured": true,
       "hot": true,
       "price": "50",
-      "updatedAt": "2026-08-09T15:03:19.053Z"
+      "updatedAt": "2026-08-09T15:03:19.053Z",
+      "purchaseRequired": false
     },
     {
       "id": "fq-w",
@@ -1517,7 +1539,8 @@
       "featured": true,
       "hot": true,
       "price": "50",
-      "updatedAt": "2026-08-09T15:03:19.053Z"
+      "updatedAt": "2026-08-09T15:03:19.053Z",
+      "purchaseRequired": false
     },
     {
       "id": "fq-x",
@@ -1563,7 +1586,8 @@
       "featured": true,
       "hot": true,
       "price": "50",
-      "updatedAt": "2026-08-09T15:03:19.053Z"
+      "updatedAt": "2026-08-09T15:03:19.053Z",
+      "purchaseRequired": false
     },
     {
       "id": "fq-y",
@@ -1590,7 +1614,8 @@
       "featured": true,
       "hot": true,
       "price": "50",
-      "updatedAt": "2026-08-09T15:03:19.053Z"
+      "updatedAt": "2026-08-09T15:03:19.053Z",
+      "purchaseRequired": false
     },
     {
       "id": "fq-wudao",
@@ -1622,7 +1647,8 @@
       "featured": true,
       "hot": true,
       "price": "20",
-      "updatedAt": "2026-08-09T15:03:19.053Z"
+      "updatedAt": "2026-08-09T15:03:19.053Z",
+      "purchaseRequired": false
     },
     {
       "id": "anzhuo-shenqi-006",
