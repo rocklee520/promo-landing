@@ -889,6 +889,15 @@ select {
   width: 100%;
   height: auto;
   border-radius: 2px;
+  background: #efeaf8;
+  cursor: zoom-in;
+}
+
+.rank-card-cover img,
+.post-cover img,
+.search-cover img,
+.carousel-slide img {
+  background: #efeaf8;
 }
 
 .note-meta {
