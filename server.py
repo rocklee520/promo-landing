@@ -198,6 +198,32 @@ def _post_updated_at(post: dict) -> str:
     return str(post.get("updatedAt") or post.get("date") or "")
 
 
+_PRESERVE_POST_KEYS = (
+    "title",
+    "price",
+    "subtitle",
+    "summary",
+    "cover",
+    "link",
+    "downloadNote",
+    "fulfillmentLink",
+    "updates",
+    "series",
+)
+
+
+def _fill_empties(keep: dict, older: dict) -> dict:
+    """Don't let blank/redacted fields wipe known good values."""
+    for key in _PRESERVE_POST_KEYS:
+        if not str(keep.get(key) or "").strip() and str(older.get(key) or "").strip():
+            keep[key] = older.get(key)
+    if not keep.get("gallery") and older.get("gallery"):
+        keep["gallery"] = older.get("gallery")
+    if not keep.get("tags") and older.get("tags"):
+        keep["tags"] = older.get("tags")
+    return keep
+
+
 def merge_posts_by_id(primary: dict, secondary: dict) -> dict:
     """Merge posts by id. Newer updatedAt wins field values; views always take max."""
     merged = json.loads(json.dumps(primary))
@@ -214,17 +240,13 @@ def merge_posts_by_id(primary: dict, secondary: dict) -> dict:
         cur = by_id[pid]
         views = max(int(cur.get("views") or 0), int(source.get("views") or 0))
         if _post_updated_at(source) >= _post_updated_at(cur):
-            keep = json.loads(json.dumps(source))
-            # don't let empty price/title wipe non-empty if accidental
-            for key in ("title", "price", "subtitle", "summary", "cover", "link", "downloadNote"):
-                if not str(keep.get(key) or "").strip() and str(cur.get(key) or "").strip():
-                    keep[key] = cur.get(key)
-            if not keep.get("gallery") and cur.get("gallery"):
-                keep["gallery"] = cur.get("gallery")
+            keep = _fill_empties(json.loads(json.dumps(source)), cur)
             keep["views"] = views
             by_id[pid] = keep
         else:
+            cur = _fill_empties(cur, source)
             cur["views"] = views
+            by_id[pid] = cur
     merged["posts"] = [by_id[pid] for pid in order if pid in by_id]
     # Prefer secondary site/nav/tags only when primary missing pieces
     if secondary.get("nav") and not merged.get("nav"):
@@ -234,6 +256,201 @@ def merge_posts_by_id(primary: dict, secondary: dict) -> dict:
     return merged
 
 
+def merge_site_config(base: dict | None, overlay: dict | None) -> dict:
+    """Merge site objects; never blank out password / pay secrets with empty overlay values."""
+    out = {}
+    if isinstance(base, dict):
+        out.update(base)
+    if isinstance(overlay, dict):
+        for key, val in overlay.items():
+            if key == "pay":
+                continue
+            if key == "adminPassword" and not str(val or "").strip():
+                continue
+            out[key] = val
+    base_pay = (base or {}).get("pay") if isinstance(base, dict) else {}
+    over_pay = (overlay or {}).get("pay") if isinstance(overlay, dict) else {}
+    pay: dict = {}
+    if isinstance(base_pay, dict):
+        pay.update(base_pay)
+    if isinstance(over_pay, dict):
+        for key, val in over_pay.items():
+            if not str(val or "").strip() and str(pay.get(key) or "").strip():
+                continue
+            pay[key] = val
+    if pay:
+        out["pay"] = pay
+    return out
+
+
+def content_updated_at(content: dict | None) -> str:
+    if not isinstance(content, dict):
+        return ""
+    site = content.get("site")
+    if not isinstance(site, dict):
+        return ""
+    return str(site.get("contentUpdatedAt") or "").strip()
+
+
+def stamp_content_updated(content: dict) -> dict:
+    site = content.setdefault("site", {})
+    if not isinstance(site, dict):
+        site = {}
+        content["site"] = site
+    site["contentUpdatedAt"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+    return content
+
+
+def merge_admin_put(current: dict, incoming: dict) -> dict:
+    """
+    Admin full save: incoming catalog wins, but never clobber a post that became
+    newer on the server (e.g. concurrent upsert) since the admin form was loaded.
+    """
+    out = json.loads(json.dumps(incoming))
+    cur_by_id = {
+        str(p.get("id")): p
+        for p in (current.get("posts") or [])
+        if isinstance(p, dict) and p.get("id")
+    }
+    posts_out: list[dict] = []
+    seen: set[str] = set()
+    for post in out.get("posts") or []:
+        if not isinstance(post, dict) or not post.get("id"):
+            continue
+        pid = str(post["id"])
+        seen.add(pid)
+        cur = cur_by_id.get(pid)
+        if cur and _post_updated_at(cur) > _post_updated_at(post):
+            keep = _fill_empties(json.loads(json.dumps(cur)), post)
+            keep["views"] = max(int(cur.get("views") or 0), int(post.get("views") or 0))
+            posts_out.append(keep)
+        else:
+            keep = _fill_empties(json.loads(json.dumps(post)), cur or {})
+            if cur:
+                keep["views"] = max(int(cur.get("views") or 0), int(post.get("views") or 0))
+            posts_out.append(keep)
+    out["posts"] = posts_out
+    out["site"] = merge_site_config(
+        current.get("site") if isinstance(current.get("site"), dict) else {},
+        out.get("site") if isinstance(out.get("site"), dict) else {},
+    )
+    if not out.get("nav") and current.get("nav"):
+        out["nav"] = current.get("nav")
+    if not out.get("tags") and current.get("tags"):
+        out["tags"] = current.get("tags")
+    stamp_content_updated(out)
+    return out
+
+
+def merge_stale_put(current: dict, incoming: dict) -> dict:
+    """Agent/stale full PUT: keep current as base; only apply newer incoming posts/site."""
+    out = json.loads(json.dumps(current))
+    cur_by_id = {
+        str(p.get("id")): p
+        for p in (out.get("posts") or [])
+        if isinstance(p, dict) and p.get("id")
+    }
+    newer_posts: list[dict] = []
+    for src in incoming.get("posts") or []:
+        if not isinstance(src, dict) or not src.get("id"):
+            continue
+        pid = str(src["id"])
+        cur = cur_by_id.get(pid)
+        # New ids always apply; existing ids only if incoming is as new or newer
+        if not cur or _post_updated_at(src) >= _post_updated_at(cur):
+            newer_posts.append(src)
+    if newer_posts:
+        out = upsert_posts_into(out, newer_posts)
+    inc_ts = content_updated_at(incoming)
+    cur_ts = content_updated_at(current)
+    if inc_ts and (not cur_ts or inc_ts >= cur_ts):
+        out["site"] = merge_site_config(
+            current.get("site") if isinstance(current.get("site"), dict) else {},
+            incoming.get("site") if isinstance(incoming.get("site"), dict) else {},
+        )
+        if incoming.get("nav"):
+            out["nav"] = incoming["nav"]
+        if incoming.get("tags"):
+            out["tags"] = incoming["tags"]
+    else:
+        # Keep current site; fill only empty pay/name fields from incoming
+        out["site"] = merge_site_config(
+            incoming.get("site") if isinstance(incoming.get("site"), dict) else {},
+            current.get("site") if isinstance(current.get("site"), dict) else {},
+        )
+    stamp_content_updated(out)
+    return out
+
+
+def rehydrate_secrets_from_trusted(incoming: dict, trusted: dict) -> dict:
+    """
+    Public /api/content redacts fulfillmentLink / pushPlusToken.
+    Restore those from trusted disk/repo copy without blocking intentional admin clears
+    (admin sends fulfillmentLink:"" explicitly; public omits the key or sets purchaseRequired).
+    """
+    out = json.loads(json.dumps(incoming))
+    trusted_posts = {
+        str(p.get("id")): p
+        for p in (trusted.get("posts") or [])
+        if isinstance(p, dict) and p.get("id")
+    }
+    for post in out.get("posts") or []:
+        if not isinstance(post, dict) or not post.get("id"):
+            continue
+        old = trusted_posts.get(str(post["id"])) or {}
+        if not old:
+            continue
+        # Missing key => redacted / omitted — restore
+        for key in _PRESERVE_POST_KEYS:
+            if key not in post and str(old.get(key) or "").strip():
+                post[key] = old.get(key)
+        # Paid public payload blanks link and drops fulfillmentLink
+        if post.get("purchaseRequired") and not str(post.get("fulfillmentLink") or "").strip():
+            if str(old.get("fulfillmentLink") or "").strip():
+                post["fulfillmentLink"] = old.get("fulfillmentLink")
+            elif str(old.get("link") or "").strip():
+                post["fulfillmentLink"] = old.get("link")
+        if not post.get("gallery") and old.get("gallery"):
+            post["gallery"] = old.get("gallery")
+    out["site"] = merge_site_config(
+        trusted.get("site") if isinstance(trusted.get("site"), dict) else {},
+        out.get("site") if isinstance(out.get("site"), dict) else {},
+    )
+    return out
+
+
+def upsert_posts_into(content: dict, posts: list) -> dict:
+    """Insert/update posts by id (incoming wins field merge); preserve empties from existing."""
+    out = json.loads(json.dumps(content))
+    by_id = {
+        str(p.get("id")): p
+        for p in (out.get("posts") or [])
+        if isinstance(p, dict) and p.get("id")
+    }
+    order = [str(p.get("id")) for p in (out.get("posts") or []) if isinstance(p, dict) and p.get("id")]
+    for src in posts:
+        if not isinstance(src, dict) or not src.get("id"):
+            continue
+        pid = str(src["id"])
+        if pid in by_id:
+            cur = by_id[pid]
+            views = max(int(cur.get("views") or 0), int(src.get("views") or 0))
+            keep = _fill_empties(json.loads(json.dumps(src)), cur)
+            # Explicit incoming fields win even if empty when key present? Prefer fill empties for safety.
+            keep["views"] = views
+            if not keep.get("updatedAt"):
+                keep["updatedAt"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+            by_id[pid] = keep
+        else:
+            neu = json.loads(json.dumps(src))
+            if not neu.get("updatedAt"):
+                neu["updatedAt"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+            by_id[pid] = neu
+            order.insert(0, pid)
+    out["posts"] = [by_id[pid] for pid in order if pid in by_id]
+    return out
+
+
 def restore_from_github() -> bool:
     """On boot: pull latest content/views from GitHub so redeploys don't reset counters."""
     remote = read_content_from_github()
@@ -241,26 +458,47 @@ def restore_from_github() -> bool:
         return False
     with CONTENT_LOCK:
         local = _read_json(CONTENT_PATH) if CONTENT_PATH.exists() else {"posts": []}
-        # Remote (GitHub backup of admin edits) wins when newer; never drop local-only posts
-        merged = merge_posts_by_id(remote, local)
+        # Rehydrate secrets that public backups may have blanked, then merge both ways
+        remote = rehydrate_secrets_from_trusted(remote, local)
+        local_ts = content_updated_at(local)
+        remote_ts = content_updated_at(remote)
+        # Prefer whichever side the admin (or upsert) stamped more recently.
+        # This stops a stale GitHub content.json from wiping Render-disk admin edits.
+        local_newer = bool(local_ts and (not remote_ts or local_ts >= remote_ts))
+        if local_newer:
+            merged = merge_posts_by_id(local, remote)
+            merged["site"] = merge_site_config(
+                remote.get("site") if isinstance(remote.get("site"), dict) else {},
+                local.get("site") if isinstance(local.get("site"), dict) else {},
+            )
+            if local.get("nav"):
+                merged["nav"] = local["nav"]
+            elif remote.get("nav"):
+                merged["nav"] = remote["nav"]
+            if local.get("tags"):
+                merged["tags"] = local["tags"]
+            elif remote.get("tags"):
+                merged["tags"] = remote["tags"]
+        else:
+            merged = merge_posts_by_id(remote, local)
+            merged["site"] = merge_site_config(
+                local.get("site") if isinstance(local.get("site"), dict) else {},
+                remote.get("site") if isinstance(remote.get("site"), dict) else {},
+            )
+            if remote.get("nav"):
+                merged["nav"] = remote["nav"]
+            elif local.get("nav"):
+                merged["nav"] = local["nav"]
+            if remote.get("tags"):
+                merged["tags"] = remote["tags"]
+            elif local.get("tags"):
+                merged["tags"] = local["tags"]
         merged = merge_remote_views(merged, local)
         views = {
             str(p.get("id")): int(p.get("views") or 0)
             for p in (merged.get("posts") or [])
             if isinstance(p, dict) and p.get("id")
         }
-        local_pwd = ((local.get("site") or {}).get("adminPassword") or "").strip()
-        remote_pwd = ((merged.get("site") or {}).get("adminPassword") or "").strip()
-        if local_pwd and not remote_pwd:
-            merged.setdefault("site", {})["adminPassword"] = local_pwd
-        if remote.get("site"):
-            merged["site"] = {**(merged.get("site") or {}), **(remote.get("site") or {})}
-            if local_pwd and not ((remote.get("site") or {}).get("adminPassword") or "").strip():
-                merged["site"]["adminPassword"] = local_pwd
-        if remote.get("nav"):
-            merged["nav"] = remote["nav"]
-        if remote.get("tags"):
-            merged["tags"] = remote["tags"]
         write_content_local(merged)
         write_views(views)
     return True
@@ -559,6 +797,7 @@ def write_content_local(data: dict) -> None:
 def write_content(data: dict) -> None:
     """Admin save: views in payload are authoritative (can reset to 0)."""
     with CONTENT_LOCK:
+        stamp_content_updated(data)
         views = read_views()
         for post in data.get("posts") or []:
             if not isinstance(post, dict):
@@ -627,7 +866,7 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header("Access-Control-Allow-Origin", "*")
         self.send_header(
             "Access-Control-Allow-Headers",
-            "Content-Type, X-Admin-Password, X-View-Token",
+            "Content-Type, X-Admin-Password, X-View-Token, X-Content-Source, X-Force-Content",
         )
         self.send_header("Access-Control-Allow-Methods", "GET, PUT, POST, OPTIONS")
 
@@ -779,6 +1018,39 @@ class Handler(BaseHTTPRequestHandler):
                 self._json(200, {"ok": True})
             else:
                 self._json(401, {"error": "密码错误"})
+            return
+
+        if path == "/api/content/upsert":
+            # Agent/script safe path: merge posts into live content without wiping admin edits
+            current = read_content(with_views=True)
+            if not self._is_admin(current):
+                self._json(401, {"error": "密码错误"})
+                return
+            posts = payload.get("posts")
+            if posts is not None and not isinstance(posts, list):
+                self._json(400, {"error": "posts 必须是数组"})
+                return
+            if not posts and not isinstance(payload.get("site"), dict):
+                self._json(400, {"error": "需要 posts 和/或 site"})
+                return
+            try:
+                merged = upsert_posts_into(current, posts or [])
+                if isinstance(payload.get("site"), dict):
+                    merged["site"] = merge_site_config(
+                        current.get("site") if isinstance(current.get("site"), dict) else {},
+                        payload.get("site"),
+                    )
+                if isinstance(payload.get("nav"), list) and payload.get("nav"):
+                    merged["nav"] = payload["nav"]
+                if isinstance(payload.get("tags"), list) and payload.get("tags"):
+                    merged["tags"] = payload["tags"]
+                write_content(merged)
+                self._json(
+                    200,
+                    {"ok": True, "content": public_content(read_content(with_views=True), admin=True)},
+                )
+            except Exception as exc:  # noqa: BLE001
+                self._json(500, {"error": str(exc)})
             return
 
         if path == "/api/orders":
@@ -946,35 +1218,38 @@ class Handler(BaseHTTPRequestHandler):
             self._json(400, {"error": "内容格式不正确"})
             return
 
-        # Keep existing password when client sends blank (redacted) value
+        # Rehydrate redacted/blank secrets from current disk before merge/replace
+        incoming = rehydrate_secrets_from_trusted(incoming, current)
         site = incoming.setdefault("site", {})
         if isinstance(site, dict) and not str(site.get("adminPassword") or "").strip():
             site["adminPassword"] = (current.get("site") or {}).get("adminPassword") or expected
 
-        # Preserve pay.pushPlusToken when admin leaves it blank
-        if isinstance(site, dict):
-            pay = site.setdefault("pay", {})
-            if isinstance(pay, dict) and not str(pay.get("pushPlusToken") or "").strip():
-                cur_pay = (current.get("site") or {}).get("pay") if isinstance(current.get("site"), dict) else {}
-                if isinstance(cur_pay, dict) and cur_pay.get("pushPlusToken"):
-                    pay["pushPlusToken"] = cur_pay.get("pushPlusToken")
-
-        # Preserve fulfillmentLink when omitted on a post
-        cur_map = {
-            str(p.get("id")): p
-            for p in (current.get("posts") or [])
-            if isinstance(p, dict) and p.get("id")
-        }
-        for post in incoming.get("posts") or []:
-            if not isinstance(post, dict) or not post.get("id"):
-                continue
-            old = cur_map.get(str(post["id"])) or {}
-            if "fulfillmentLink" not in post and old.get("fulfillmentLink"):
-                post["fulfillmentLink"] = old.get("fulfillmentLink")
+        source = (self.headers.get("X-Content-Source") or "").strip().lower()
+        force = (self.headers.get("X-Force-Content") or "").strip() in {"1", "true", "yes"}
+        cur_ts = content_updated_at(current)
+        inc_ts = content_updated_at(incoming)
 
         try:
-            write_content(incoming)
-            self._json(200, {"ok": True, "content": public_content(read_content(with_views=True), admin=True)})
+            merged_stale = False
+            if source == "admin" or force:
+                to_write = merge_admin_put(current, incoming)
+            elif cur_ts and (not inc_ts or inc_ts < cur_ts):
+                # Stale full catalog from scripts/GitHub — do not wipe newer admin disk state
+                to_write = merge_stale_put(current, incoming)
+                merged_stale = True
+            else:
+                # Fresh enough full PUT without admin header — still protect concurrent newer posts
+                to_write = merge_admin_put(current, incoming)
+
+            write_content(to_write)
+            payload_out = {
+                "ok": True,
+                "content": public_content(read_content(with_views=True), admin=True),
+            }
+            if merged_stale:
+                payload_out["merged"] = True
+                payload_out["warning"] = "检测到旧版 content，已与线上合并，未整包覆盖"
+            self._json(200, payload_out)
         except Exception as exc:  # noqa: BLE001
             self._json(500, {"error": str(exc)})
 
