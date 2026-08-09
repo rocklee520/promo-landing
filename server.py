@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import base64
+import gzip
 import json
 import mimetypes
 import os
@@ -625,8 +626,11 @@ def pushplus_token(content: dict | None = None) -> str:
     return ""
 
 
-def public_content(content: dict, *, admin: bool = False) -> dict:
-    """Hide secrets from public API; admin=True keeps fulfillment links / push token."""
+def public_content(content: dict, *, admin: bool = False, lite: bool = False) -> dict:
+    """Hide secrets from public API; admin=True keeps fulfillment links / push token.
+
+    lite=True strips gallery arrays and long text — for homepage/search mobile speed.
+    """
     clone = json.loads(json.dumps(content))
     site = clone.get("site")
     if isinstance(site, dict):
@@ -655,6 +659,17 @@ def public_content(content: dict, *, admin: bool = False) -> dict:
             else:
                 post["purchaseRequired"] = False
                 post.pop("fulfillmentLink", None)
+            if lite:
+                # Homepage only needs cover + meta; drop heavy gallery payloads
+                gal = post.get("gallery")
+                post["galleryCount"] = len(gal) if isinstance(gal, list) else 0
+                post.pop("gallery", None)
+                summary = str(post.get("summary") or "")
+                if len(summary) > 180:
+                    post["summary"] = summary[:180] + "…"
+                updates = str(post.get("updates") or "")
+                if updates:
+                    post.pop("updates", None)
     return clone
 
 
@@ -870,11 +885,28 @@ class Handler(BaseHTTPRequestHandler):
         )
         self.send_header("Access-Control-Allow-Methods", "GET, PUT, POST, OPTIONS")
 
-    def _json(self, code: int, payload: dict, set_cookie: str | None = None) -> None:
-        body = json.dumps(payload, ensure_ascii=False).encode("utf-8")
+    def _wants_gzip(self) -> bool:
+        accept = (self.headers.get("Accept-Encoding") or "").lower()
+        return "gzip" in accept
+
+    def _send_body(
+        self,
+        code: int,
+        data: bytes,
+        content_type: str,
+        *,
+        cache_control: str = "no-store",
+        set_cookie: str | None = None,
+        compressible: bool = True,
+    ) -> None:
+        use_gzip = compressible and self._wants_gzip() and len(data) >= 512
+        body = gzip.compress(data, compresslevel=6) if use_gzip else data
         self.send_response(code)
-        self.send_header("Content-Type", "application/json; charset=utf-8")
-        self.send_header("Cache-Control", "no-store")
+        self.send_header("Content-Type", content_type)
+        self.send_header("Cache-Control", cache_control)
+        self.send_header("Vary", "Accept-Encoding")
+        if use_gzip:
+            self.send_header("Content-Encoding", "gzip")
         self._cors()
         if set_cookie:
             self.send_header("Set-Cookie", set_cookie)
@@ -882,14 +914,40 @@ class Handler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(body)
 
-    def _bytes(self, code: int, data: bytes, content_type: str) -> None:
-        self.send_response(code)
-        self.send_header("Content-Type", content_type)
-        self.send_header("Cache-Control", "no-cache")
-        self._cors()
-        self.send_header("Content-Length", str(len(data)))
-        self.end_headers()
-        self.wfile.write(data)
+    def _json(
+        self,
+        code: int,
+        payload: dict,
+        set_cookie: str | None = None,
+        *,
+        cache_control: str = "no-store",
+    ) -> None:
+        body = json.dumps(payload, ensure_ascii=False).encode("utf-8")
+        self._send_body(
+            code,
+            body,
+            "application/json; charset=utf-8",
+            cache_control=cache_control,
+            set_cookie=set_cookie,
+            compressible=True,
+        )
+
+    def _bytes(
+        self,
+        code: int,
+        data: bytes,
+        content_type: str,
+        *,
+        cache_control: str = "no-cache",
+        compressible: bool = True,
+    ) -> None:
+        self._send_body(
+            code,
+            data,
+            content_type,
+            cache_control=cache_control,
+            compressible=compressible,
+        )
 
     def _client_key(self) -> str:
         # Prefer cookie token; fallback to IP
@@ -920,7 +978,11 @@ class Handler(BaseHTTPRequestHandler):
             try:
                 content = read_content(with_views=True)
                 admin = self._is_admin(content)
-                self._json(200, public_content(content, admin=admin))
+                lite = (qs.get("lite") or [""])[0].strip() in {"1", "true", "yes"}
+                payload = public_content(content, admin=admin, lite=lite and not admin)
+                # Public list can be briefly cached on phone; admin always fresh
+                cache = "no-store" if admin else "public, max-age=30"
+                self._json(200, payload, cache_control=cache)
             except Exception as exc:  # noqa: BLE001
                 self._json(500, {"error": str(exc)})
             return
@@ -998,7 +1060,29 @@ class Handler(BaseHTTPRequestHandler):
                 ".js": "text/javascript; charset=utf-8",
                 ".json": "application/json; charset=utf-8",
             }[file_path.suffix]
-        self._bytes(200, data, ctype)
+        # Cache static assets on mobile; HTML stays short-lived
+        if "/assets/" in str(file_path).replace("\\", "/") or file_path.suffix.lower() in {
+            ".jpg",
+            ".jpeg",
+            ".png",
+            ".webp",
+            ".gif",
+            ".svg",
+            ".ico",
+            ".woff2",
+        }:
+            cache = "public, max-age=604800, immutable"
+            compressible = file_path.suffix.lower() in {".svg", ".ico"}
+        elif file_path.suffix in {".css", ".js"}:
+            cache = "public, max-age=86400"
+            compressible = True
+        elif file_path.suffix == ".html":
+            cache = "public, max-age=60"
+            compressible = True
+        else:
+            cache = "public, max-age=300"
+            compressible = True
+        self._bytes(200, data, ctype, cache_control=cache, compressible=compressible)
 
     def do_POST(self) -> None:  # noqa: N802
         parsed = urlparse(self.path)
