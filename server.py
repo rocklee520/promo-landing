@@ -27,8 +27,10 @@ DATA_DIR = Path(os.environ.get("DATA_DIR") or (ROOT / "data"))
 CONTENT_PATH = DATA_DIR / "content.json"
 VIEWS_PATH = DATA_DIR / "views.json"
 ORDERS_PATH = DATA_DIR / "orders.json"
+THUMBS_DIR = DATA_DIR / "thumbs"
 HOST = os.environ.get("HOST", "0.0.0.0")
 PORT = int(os.environ.get("PORT", "8787"))
+THUMB_WIDTHS = {240, 360, 480, 720, 960}
 
 # Persist across Render redeploys via GitHub (public raw read; token optional for write-back)
 GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN", "").strip()
@@ -83,6 +85,88 @@ def ensure_orders_file() -> None:
     DATA_DIR.mkdir(parents=True, exist_ok=True)
     if not ORDERS_PATH.exists():
         _write_json(ORDERS_PATH, {"orders": []})
+
+
+def ensure_thumbs_dir() -> None:
+    THUMBS_DIR.mkdir(parents=True, exist_ok=True)
+
+
+def resolve_asset_path(url_path: str) -> Path | None:
+    """Only allow files under ROOT/assets."""
+    raw = str(url_path or "").strip()
+    if not raw.startswith("/assets/"):
+        return None
+    rel = raw.lstrip("/")
+    candidate = (ROOT / rel).resolve()
+    assets_root = (ROOT / "assets").resolve()
+    if not str(candidate).startswith(str(assets_root)):
+        return None
+    if not candidate.is_file():
+        return None
+    return candidate
+
+
+def make_thumb_bytes(src: Path, width: int) -> tuple[bytes, str]:
+    """Return (bytes, content_type) WebP thumbnail, falling back to JPEG."""
+    from PIL import Image, ImageOps  # lazy import
+
+    with Image.open(src) as im:
+        im = ImageOps.exif_transpose(im)
+        if im.mode not in ("RGB", "RGBA"):
+            im = im.convert("RGBA" if "A" in im.getbands() else "RGB")
+        w, h = im.size
+        if w > width:
+            nh = max(1, int(h * (width / float(w))))
+            im = im.resize((width, nh), Image.Resampling.LANCZOS)
+        import io
+
+        buf = io.BytesIO()
+        try:
+            # Flatten alpha onto white for smaller webp/jpeg
+            if im.mode == "RGBA":
+                bg = Image.new("RGB", im.size, (255, 255, 255))
+                bg.paste(im, mask=im.split()[-1])
+                im = bg
+            elif im.mode != "RGB":
+                im = im.convert("RGB")
+            im.save(buf, format="WEBP", quality=72, method=4)
+            return buf.getvalue(), "image/webp"
+        except Exception:  # noqa: BLE001
+            buf = io.BytesIO()
+            if im.mode != "RGB":
+                im = im.convert("RGB")
+            im.save(buf, format="JPEG", quality=78, optimize=True)
+            return buf.getvalue(), "image/jpeg"
+
+
+def get_or_create_thumb(src: Path, width: int) -> tuple[bytes, str]:
+    ensure_thumbs_dir()
+    width = int(width)
+    if width not in THUMB_WIDTHS:
+        width = min(THUMB_WIDTHS, key=lambda x: abs(x - width))
+    # Cache key from relative path + mtime + width
+    try:
+        rel = src.resolve().relative_to((ROOT / "assets").resolve()).as_posix()
+    except Exception:  # noqa: BLE001
+        rel = src.name
+    safe = re.sub(r"[^a-zA-Z0-9._-]+", "_", rel)
+    mtime = int(src.stat().st_mtime)
+    cache_path = THUMBS_DIR / f"{safe}.w{width}.{mtime}.webp"
+    # Also accept jpeg fallback cache name
+    cache_jpg = THUMBS_DIR / f"{safe}.w{width}.{mtime}.jpg"
+    if cache_path.exists():
+        return cache_path.read_bytes(), "image/webp"
+    if cache_jpg.exists():
+        return cache_jpg.read_bytes(), "image/jpeg"
+    data, ctype = make_thumb_bytes(src, width)
+    try:
+        out = cache_path if ctype == "image/webp" else cache_jpg
+        tmp = out.with_suffix(out.suffix + ".tmp")
+        tmp.write_bytes(data)
+        tmp.replace(out)
+    except Exception as exc:  # noqa: BLE001
+        sys.stdout.write(f"thumb cache write skipped: {exc}\n")
+    return data, ctype
 
 
 def _read_json(path: Path) -> dict:
@@ -987,6 +1071,40 @@ class Handler(BaseHTTPRequestHandler):
                 self._json(500, {"error": str(exc)})
             return
 
+        if path == "/img":
+            # On-demand thumbnail: /img?u=/assets/xxx/01.jpg&w=480
+            src_url = (qs.get("u") or qs.get("src") or [""])[0].strip()
+            try:
+                width = int((qs.get("w") or ["480"])[0])
+            except ValueError:
+                width = 480
+            asset = resolve_asset_path(src_url)
+            if not asset:
+                self._json(404, {"error": "image not found"})
+                return
+            try:
+                data, ctype = get_or_create_thumb(asset, width)
+                self._bytes(
+                    200,
+                    data,
+                    ctype,
+                    cache_control="public, max-age=604800, immutable",
+                    compressible=False,
+                )
+            except Exception as exc:  # noqa: BLE001
+                # Fallback: serve original file if thumb fails
+                sys.stdout.write(f"thumb failed {src_url}: {exc}\n")
+                raw = asset.read_bytes()
+                guess = mimetypes.guess_type(str(asset))[0] or "image/jpeg"
+                self._bytes(
+                    200,
+                    raw,
+                    guess,
+                    cache_control="public, max-age=86400",
+                    compressible=False,
+                )
+            return
+
         if path == "/api/orders":
             order_id = (qs.get("id") or [""])[0].strip()
             token = (qs.get("token") or [""])[0].strip()
@@ -1342,6 +1460,7 @@ def main() -> None:
     ensure_content_file()
     ensure_views_file()
     ensure_orders_file()
+    ensure_thumbs_dir()
     if restore_from_github():
         print(f"已从 GitHub 恢复内容/浏览量: {GITHUB_REPO}@{GITHUB_BRANCH}")
     else:
