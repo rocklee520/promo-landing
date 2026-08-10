@@ -160,12 +160,29 @@ window.Promo = (() => {
 
   function bindSearchForm(form) {
     if (!form) return;
+    // Prefer native GET submit (works on mobile WebViews). Only enhance Enter key.
+    form.setAttribute("action", form.getAttribute("action") || "/search.html");
+    form.setAttribute("method", "get");
+    const input = form.querySelector("input[name='keyword'], input[type='search']");
+    if (input) {
+      input.setAttribute("enterkeyhint", "search");
+      input.setAttribute("autocapitalize", "off");
+      input.setAttribute("autocomplete", "off");
+      input.setAttribute("correct", "off");
+      // iOS Safari: avoid zoom-on-focus without tiny text
+      if (!input.style.fontSize) input.style.fontSize = "16px";
+    }
     form.addEventListener("submit", (e) => {
-      e.preventDefault();
-      const input = form.querySelector("input[name='keyword'], input[type='search']");
-      const keyword = (input?.value || "").trim();
-      if (!keyword) return;
-      location.href = `/search.html?keyword=${encodeURIComponent(keyword)}`;
+      const el = form.querySelector("input[name='keyword'], input[type='search']");
+      const keyword = (el?.value || "").trim();
+      if (!keyword) {
+        e.preventDefault();
+        el?.focus();
+        return;
+      }
+      // Keep value trimmed in the query string
+      if (el && el.value !== keyword) el.value = keyword;
+      // Do NOT preventDefault — native navigation is more reliable on phones
     });
   }
 
