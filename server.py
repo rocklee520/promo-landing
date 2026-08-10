@@ -1083,6 +1083,27 @@ class Handler(BaseHTTPRequestHandler):
                 self._json(404, {"error": "image not found"})
                 return
             try:
+                # Keep animated GIF / animated WebP intact (don't freeze frames)
+                suf = asset.suffix.lower()
+                if suf in {".gif", ".webp"}:
+                    with asset.open("rb") as fh:
+                        head = fh.read(64)
+                    animated = suf == ".gif" or (
+                        len(head) > 20
+                        and head[12:16] == b"VP8X"
+                        and bool(head[20] & 0x02)
+                    )
+                    if animated:
+                        data = asset.read_bytes()
+                        ctype = "image/gif" if suf == ".gif" else "image/webp"
+                        self._bytes(
+                            200,
+                            data,
+                            ctype,
+                            cache_control="public, max-age=604800, immutable",
+                            compressible=False,
+                        )
+                        return
                 data, ctype = get_or_create_thumb(asset, width)
                 self._bytes(
                     200,
