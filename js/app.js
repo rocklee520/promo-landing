@@ -51,13 +51,15 @@
   }
 
   function featuredPosts() {
-    // 轮播：最多 5 条，按浏览量从高到低
-    const scoped = posts().filter((p) => inSeries(p, seriesParam));
+    // 轮播：最新上架封面（按 updatedAt / date）
+    const scoped = posts().filter((p) => inSeries(p, seriesParam) && p.cover);
     return scoped
       .slice()
       .sort((a, b) => {
-        const dv = (b.views || 0) - (a.views || 0);
-        if (dv) return dv;
+        const ta = String(a.updatedAt || a.date || "");
+        const tb = String(b.updatedAt || b.date || "");
+        const d = tb.localeCompare(ta);
+        if (d) return d;
         return String(b.date || "").localeCompare(String(a.date || ""));
       })
       .slice(0, 5);
