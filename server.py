@@ -30,11 +30,22 @@ ORDERS_PATH = DATA_DIR / "orders.json"
 THUMBS_DIR = DATA_DIR / "thumbs"
 HOST = os.environ.get("HOST", "0.0.0.0")
 PORT = int(os.environ.get("PORT", "8787"))
-THUMB_WIDTHS = {240, 360, 480, 720, 960}
+THUMB_WIDTHS = {240, 360, 480}
 # Free Render instances are ~512MB; avoid loading many full images at once.
-THUMB_MAX_SRC_BYTES = int(os.environ.get("THUMB_MAX_SRC_BYTES", str(1_500_000)))
+THUMB_MAX_SRC_BYTES = int(os.environ.get("THUMB_MAX_SRC_BYTES", str(600_000)))
 THUMB_SEM = threading.Semaphore(int(os.environ.get("THUMB_CONCURRENCY", "1")))
+# Generate thumbs only when free; otherwise redirect to original (prevents Pillow OOM storms)
+THUMB_GENERATE = os.environ.get("THUMB_GENERATE", "1").strip().lower() not in {"0", "false", "no"}
+MAX_CONCURRENT_REQUESTS = int(os.environ.get("MAX_CONCURRENT_REQUESTS", "8"))
+REQUEST_SEM = threading.Semaphore(MAX_CONCURRENT_REQUESTS)
 STATIC_CHUNK = 64 * 1024
+GZIP_MAX_BYTES = int(os.environ.get("GZIP_MAX_BYTES", str(120_000)))
+
+# Short-lived in-memory caches to avoid JSON deep-copy storms
+_CONTENT_CACHE: dict = {"mtime": None, "data": None}
+_LITE_PUBLIC_CACHE: dict = {"key": None, "ts": 0.0, "payload": None}
+_LITE_PUBLIC_TTL = float(os.environ.get("LITE_PUBLIC_TTL", "20"))
+_CACHE_LOCK = threading.Lock()
 
 # Persist across Render redeploys via GitHub (public raw read; token optional for write-back)
 GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN", "").strip()
@@ -127,21 +138,22 @@ def is_animated_image(src: Path) -> bool:
 def make_thumb_bytes(src: Path, width: int) -> tuple[bytes, str]:
     """Return (bytes, content_type) WebP thumbnail, falling back to JPEG."""
     from PIL import Image, ImageOps  # lazy import
+    import gc
     import io
 
     # Cap decode size to avoid huge RGBA buffers on free instances
-    Image.MAX_IMAGE_PIXELS = 25_000_000
+    Image.MAX_IMAGE_PIXELS = 8_000_000
 
     with Image.open(src) as im:
         im = ImageOps.exif_transpose(im)
         # Prefer thumbnail() over full-res decode+resize when possible
         try:
-            im.draft("RGB", (width, width * 4))
+            im.draft("RGB", (width, width * 2))
         except Exception:  # noqa: BLE001
             pass
         if im.mode not in ("RGB", "RGBA"):
             im = im.convert("RGBA" if "A" in im.getbands() else "RGB")
-        im.thumbnail((width, width * 4), Image.Resampling.BILINEAR)
+        im.thumbnail((width, width * 2), Image.Resampling.BILINEAR)
         buf = io.BytesIO()
         try:
             if im.mode == "RGBA":
@@ -150,22 +162,23 @@ def make_thumb_bytes(src: Path, width: int) -> tuple[bytes, str]:
                 im = bg
             elif im.mode != "RGB":
                 im = im.convert("RGB")
-            im.save(buf, format="WEBP", quality=70, method=0)
-            return buf.getvalue(), "image/webp"
+            im.save(buf, format="WEBP", quality=65, method=0)
+            out = buf.getvalue(), "image/webp"
         except Exception:  # noqa: BLE001
             buf = io.BytesIO()
             if im.mode != "RGB":
                 im = im.convert("RGB")
-            im.save(buf, format="JPEG", quality=75, optimize=True)
-            return buf.getvalue(), "image/jpeg"
+            im.save(buf, format="JPEG", quality=70, optimize=True)
+            out = buf.getvalue(), "image/jpeg"
+    gc.collect()
+    return out
 
 
-def get_or_create_thumb(src: Path, width: int) -> tuple[bytes, str]:
+def thumb_cache_paths(src: Path, width: int) -> tuple[Path, Path]:
     ensure_thumbs_dir()
     width = int(width)
     if width not in THUMB_WIDTHS:
         width = min(THUMB_WIDTHS, key=lambda x: abs(x - width))
-    # Cache key from relative path + mtime + width
     try:
         rel = src.resolve().relative_to((ROOT / "assets").resolve()).as_posix()
     except Exception:  # noqa: BLE001
@@ -173,8 +186,15 @@ def get_or_create_thumb(src: Path, width: int) -> tuple[bytes, str]:
     safe = re.sub(r"[^a-zA-Z0-9._-]+", "_", rel)
     mtime = int(src.stat().st_mtime)
     cache_path = THUMBS_DIR / f"{safe}.w{width}.{mtime}.webp"
-    # Also accept jpeg fallback cache name
     cache_jpg = THUMBS_DIR / f"{safe}.w{width}.{mtime}.jpg"
+    return cache_path, cache_jpg
+
+
+def get_or_create_thumb(src: Path, width: int) -> tuple[bytes, str]:
+    width = int(width)
+    if width not in THUMB_WIDTHS:
+        width = min(THUMB_WIDTHS, key=lambda x: abs(x - width))
+    cache_path, cache_jpg = thumb_cache_paths(src, width)
     if cache_path.exists():
         return cache_path.read_bytes(), "image/webp"
     if cache_jpg.exists():
@@ -194,6 +214,18 @@ def get_or_create_thumb(src: Path, width: int) -> tuple[bytes, str]:
         except Exception as exc:  # noqa: BLE001
             sys.stdout.write(f"thumb cache write skipped: {exc}\n")
         return data, ctype
+
+
+def try_cached_thumb(src: Path, width: int) -> tuple[bytes, str] | None:
+    width = int(width)
+    if width not in THUMB_WIDTHS:
+        width = min(THUMB_WIDTHS, key=lambda x: abs(x - width))
+    cache_path, cache_jpg = thumb_cache_paths(src, width)
+    if cache_path.exists():
+        return cache_path.read_bytes(), "image/webp"
+    if cache_jpg.exists():
+        return cache_jpg.read_bytes(), "image/jpeg"
+    return None
 
 
 def _read_json(path: Path) -> dict:
@@ -688,10 +720,30 @@ def merge_views_into_content(content: dict, views: dict[str, int] | None = None)
 
 def read_content(*, with_views: bool = True) -> dict:
     with CONTENT_LOCK:
-        content = _read_json(CONTENT_PATH)
+        try:
+            mtime = CONTENT_PATH.stat().st_mtime if CONTENT_PATH.exists() else None
+        except OSError:
+            mtime = None
+        cached = _CONTENT_CACHE.get("data")
+        if cached is not None and _CONTENT_CACHE.get("mtime") == mtime:
+            content = json.loads(json.dumps(cached))
+        else:
+            content = _read_json(CONTENT_PATH)
+            _CONTENT_CACHE["mtime"] = mtime
+            _CONTENT_CACHE["data"] = json.loads(json.dumps(content))
         if with_views:
             content = merge_views_into_content(content)
         return content
+
+
+def invalidate_content_cache() -> None:
+    with CONTENT_LOCK:
+        _CONTENT_CACHE["mtime"] = None
+        _CONTENT_CACHE["data"] = None
+    with _CACHE_LOCK:
+        _LITE_PUBLIC_CACHE["key"] = None
+        _LITE_PUBLIC_CACHE["payload"] = None
+        _LITE_PUBLIC_CACHE["ts"] = 0.0
 
 
 def expected_admin_password(content: dict | None = None) -> str:
@@ -918,6 +970,7 @@ def update_order(order_id: str, mutator) -> dict:
 
 def write_content_local(data: dict) -> None:
     _write_json(CONTENT_PATH, data)
+    invalidate_content_cache()
 
 
 def write_content(data: dict) -> None:
@@ -995,6 +1048,20 @@ def increment_view(post_id: str, client_key: str) -> tuple[bool, int]:
 class Handler(BaseHTTPRequestHandler):
     server_version = "PromoLanding/1.0"
 
+    def handle(self) -> None:
+        # Bound concurrent connections — ThreadingHTTPServer is otherwise unlimited
+        acquired = REQUEST_SEM.acquire(timeout=3)
+        if not acquired:
+            try:
+                self.send_error(503, "Server busy")
+            except Exception:  # noqa: BLE001
+                pass
+            return
+        try:
+            super().handle()
+        finally:
+            REQUEST_SEM.release()
+
     def log_message(self, fmt: str, *args) -> None:
         sys.stdout.write("%s - %s\n" % (self.address_string(), fmt % args))
 
@@ -1020,8 +1087,12 @@ class Handler(BaseHTTPRequestHandler):
         set_cookie: str | None = None,
         compressible: bool = True,
     ) -> None:
-        use_gzip = compressible and self._wants_gzip() and len(data) >= 512
-        body = gzip.compress(data, compresslevel=6) if use_gzip else data
+        use_gzip = (
+            compressible
+            and self._wants_gzip()
+            and 512 <= len(data) <= GZIP_MAX_BYTES
+        )
+        body = gzip.compress(data, compresslevel=1) if use_gzip else data
         self.send_response(code)
         self.send_header("Content-Type", content_type)
         self.send_header("Cache-Control", cache_control)
@@ -1127,10 +1198,25 @@ class Handler(BaseHTTPRequestHandler):
 
         if path == "/api/content":
             try:
+                admin = self._is_admin()
+                lite = (qs.get("lite") or [""])[0].strip() in {"1", "true", "yes"}
+                if lite and not admin:
+                    with _CACHE_LOCK:
+                        now = time.time()
+                        if (
+                            _LITE_PUBLIC_CACHE.get("payload") is not None
+                            and now - float(_LITE_PUBLIC_CACHE.get("ts") or 0) < _LITE_PUBLIC_TTL
+                        ):
+                            payload = _LITE_PUBLIC_CACHE["payload"]
+                            self._json(200, payload, cache_control="public, max-age=20")
+                            return
                 content = read_content(with_views=True)
                 admin = self._is_admin(content)
-                lite = (qs.get("lite") or [""])[0].strip() in {"1", "true", "yes"}
                 payload = public_content(content, admin=admin, lite=lite and not admin)
+                if lite and not admin:
+                    with _CACHE_LOCK:
+                        _LITE_PUBLIC_CACHE["payload"] = payload
+                        _LITE_PUBLIC_CACHE["ts"] = time.time()
                 # Public list can be briefly cached on phone; admin always fresh
                 cache = "no-store" if admin else "public, max-age=30"
                 self._json(200, payload, cache_control=cache)
@@ -1145,6 +1231,9 @@ class Handler(BaseHTTPRequestHandler):
                 width = int((qs.get("w") or ["480"])[0])
             except ValueError:
                 width = 480
+            # Cap requested width to allowed set (maps 720/960 -> 480)
+            if width not in THUMB_WIDTHS:
+                width = min(THUMB_WIDTHS, key=lambda x: abs(x - width))
             asset = resolve_asset_path(src_url)
             if not asset:
                 self._json(404, {"error": "image not found"})
@@ -1157,8 +1246,9 @@ class Handler(BaseHTTPRequestHandler):
             if is_animated_image(asset) or src_size > THUMB_MAX_SRC_BYTES:
                 self._redirect(src_url, cache_control="public, max-age=86400")
                 return
-            try:
-                data, ctype = get_or_create_thumb(asset, width)
+            cached = try_cached_thumb(asset, width)
+            if cached:
+                data, ctype = cached
                 self._bytes(
                     200,
                     data,
@@ -1166,9 +1256,25 @@ class Handler(BaseHTTPRequestHandler):
                     cache_control="public, max-age=604800, immutable",
                     compressible=False,
                 )
-            except Exception as exc:  # noqa: BLE001
-                sys.stdout.write(f"thumb failed {src_url}: {exc}\n")
-                self._redirect(src_url, cache_control="public, max-age=3600")
+                return
+            # Cache miss: only generate if free; otherwise redirect (avoids Pillow OOM)
+            if THUMB_GENERATE and THUMB_SEM.acquire(blocking=False):
+                try:
+                    data, ctype = get_or_create_thumb(asset, width)
+                    self._bytes(
+                        200,
+                        data,
+                        ctype,
+                        cache_control="public, max-age=604800, immutable",
+                        compressible=False,
+                    )
+                except Exception as exc:  # noqa: BLE001
+                    sys.stdout.write(f"thumb failed {src_url}: {exc}\n")
+                    self._redirect(src_url, cache_control="public, max-age=3600")
+                finally:
+                    THUMB_SEM.release()
+                return
+            self._redirect(src_url, cache_control="public, max-age=3600")
             return
 
         if path == "/api/orders":
