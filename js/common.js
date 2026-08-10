@@ -17,6 +17,17 @@ window.Promo = (() => {
     return /元|￥|\$|¥/.test(s) ? s : `${s}元`;
   }
 
+  /** Prefer updatedAt (上架/改价时间), fall back to date. */
+  function postTime(p) {
+    return String(p?.updatedAt || p?.date || "");
+  }
+
+  function compareNewest(a, b) {
+    const d = postTime(b).localeCompare(postTime(a));
+    if (d) return d;
+    return String(b?.date || "").localeCompare(String(a?.date || ""));
+  }
+
   /** Serve resized WebP via /img. Keep animated covers intact. */
   function thumbUrl(src, width = 480) {
     const s = String(src || "").trim();
@@ -52,8 +63,8 @@ window.Promo = (() => {
 
   async function loadContent(options = {}) {
     const lite = Boolean(options.lite);
-    const cacheKey = lite ? "promo_content_lite_v2" : "promo_content_full_v2";
-    const ttlMs = lite ? 60_000 : 30_000;
+    const cacheKey = lite ? "promo_content_lite_v3" : "promo_content_full_v3";
+    const ttlMs = lite ? 30_000 : 15_000;
     try {
       const cached = sessionStorage.getItem(cacheKey);
       if (cached) {
@@ -194,6 +205,8 @@ window.Promo = (() => {
     formatPrice,
     thumbUrl,
     coverUrl,
+    postTime,
+    compareNewest,
     titleWithPriceHtml,
     loadContent,
     trackView,
