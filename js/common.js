@@ -17,13 +17,29 @@ window.Promo = (() => {
     return /元|￥|\$|¥/.test(s) ? s : `${s}元`;
   }
 
-  /** Serve resized WebP via /img (falls back to original for remote URLs). */
+  /** Serve resized WebP via /img. Keep animated covers intact. */
   function thumbUrl(src, width = 480) {
     const s = String(src || "").trim();
     if (!s) return "";
     if (!s.startsWith("/assets/")) return s;
+    // GIF / dedicated animated cover files must not be freeze-framed by /img
+    if (/\.gif(?:$|\?)/i.test(s) || /\/cover\.(gif|webp)(?:$|\?)/i.test(s)) return s;
     const w = Number(width) || 480;
     return `/img?u=${encodeURIComponent(s)}&w=${w}`;
+  }
+
+  /** Prefer animated cover (GIF / cover.webp) when available. */
+  function coverUrl(p, width = 480) {
+    const cover = String(p?.cover || "").trim();
+    const gallery = Array.isArray(p?.gallery) ? p.gallery : [];
+    const animated = gallery.find((u) =>
+      /\.(gif)(?:$|\?)/i.test(String(u || "")) ||
+      /\/cover\.(gif|webp)(?:$|\?)/i.test(String(u || ""))
+    );
+    const coverIsAnimated =
+      /\.gif(?:$|\?)/i.test(cover) || /\/cover\.(gif|webp)(?:$|\?)/i.test(cover);
+    const src = (!coverIsAnimated && animated ? animated : cover) || cover;
+    return thumbUrl(src, width);
   }
 
   /** Safe HTML: title + optional price badge */
@@ -36,7 +52,7 @@ window.Promo = (() => {
 
   async function loadContent(options = {}) {
     const lite = Boolean(options.lite);
-    const cacheKey = lite ? "promo_content_lite_v1" : "promo_content_full_v1";
+    const cacheKey = lite ? "promo_content_lite_v2" : "promo_content_full_v2";
     const ttlMs = lite ? 60_000 : 30_000;
     try {
       const cached = sessionStorage.getItem(cacheKey);
@@ -177,6 +193,7 @@ window.Promo = (() => {
     escapeAttr,
     formatPrice,
     thumbUrl,
+    coverUrl,
     titleWithPriceHtml,
     loadContent,
     trackView,
