@@ -143,6 +143,7 @@ window.Promo = (() => {
     if (!q) return [];
     return publicPosts(posts).filter((p) => {
       const hay = [
+        p.id,
         p.title,
         p.subtitle,
         p.summary,
