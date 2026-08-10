@@ -5,6 +5,7 @@
     titleWithPriceHtml,
     thumbUrl,
     coverUrl,
+    compareNewest,
     loadContent,
     postHref,
     postTarget,
@@ -54,16 +55,7 @@
   function featuredPosts() {
     // 轮播：最新上架封面（按 updatedAt / date）
     const scoped = posts().filter((p) => inSeries(p, seriesParam) && p.cover);
-    return scoped
-      .slice()
-      .sort((a, b) => {
-        const ta = String(a.updatedAt || a.date || "");
-        const tb = String(b.updatedAt || b.date || "");
-        const d = tb.localeCompare(ta);
-        if (d) return d;
-        return String(b.date || "").localeCompare(String(a.date || ""));
-      })
-      .slice(0, 5);
+    return scoped.slice().sort(compareNewest).slice(0, 5);
   }
 
   function renderCarousel() {
@@ -116,12 +108,12 @@
     // 热门排行：按真实浏览量
     let list = posts().filter((p) => inSeries(p, seriesParam));
     if (state.rankMode === "newest") {
-      list.sort((a, b) => String(b.date || "").localeCompare(String(a.date || "")));
+      list.sort(compareNewest);
     } else {
       list.sort((a, b) => {
         const dv = (b.views || 0) - (a.views || 0);
         if (dv !== 0) return dv;
-        return String(b.date || "").localeCompare(String(a.date || ""));
+        return compareNewest(a, b);
       });
     }
     return list.slice(0, 12);
@@ -155,11 +147,15 @@
   function filteredSortedPosts() {
     const list = posts().filter((p) => inSeries(p, seriesParam));
     if (state.sortMode === "oldest") {
-      list.sort((a, b) => String(a.date || "").localeCompare(String(b.date || "")));
+      list.sort((a, b) => compareNewest(b, a));
     } else if (state.sortMode === "views") {
-      list.sort((a, b) => (b.views || 0) - (a.views || 0));
+      list.sort((a, b) => {
+        const dv = (b.views || 0) - (a.views || 0);
+        if (dv !== 0) return dv;
+        return compareNewest(a, b);
+      });
     } else {
-      list.sort((a, b) => String(b.date || "").localeCompare(String(a.date || "")));
+      list.sort(compareNewest);
     }
     return list;
   }
