@@ -4,6 +4,7 @@
     escapeAttr,
     titleWithPriceHtml,
     thumbUrl,
+    coverUrl,
     loadContent,
     postHref,
     postTarget,
@@ -78,7 +79,7 @@
       .map(
         (p, i) => `
         <a class="carousel-slide" href="${escapeAttr(postHref(p))}" target="${postTarget(p)}" rel="noopener noreferrer">
-          <img src="${escapeAttr(thumbUrl(p.cover || "", 960))}" alt="${escapeAttr(p.title || "")}" ${i === 0 ? 'fetchpriority="high"' : 'loading="lazy"'} decoding="async" />
+          <img src="${escapeAttr(coverUrl(p, 960))}" alt="${escapeAttr(p.title || "")}" ${i === 0 ? 'fetchpriority="high"' : 'loading="lazy"'} decoding="async" />
           <div class="carousel-caption"><h2>${titleWithPriceHtml(p)}</h2></div>
         </a>`
       )
@@ -138,7 +139,7 @@
         const size = extractSize(p);
         return `
         <a class="rank-card" href="${escapeAttr(postHref(p))}" target="${postTarget(p)}" rel="noopener noreferrer">
-          <div class="rank-card-cover"><img src="${escapeAttr(thumbUrl(p.cover || "", 360))}" alt="" loading="lazy" decoding="async" /></div>
+          <div class="rank-card-cover"><img src="${escapeAttr(coverUrl(p, 360))}" alt="" loading="lazy" decoding="async" /></div>
           <div class="rank-card-body">
             <h4>${titleWithPriceHtml(p)}</h4>
             <div class="rank-card-meta">
@@ -176,7 +177,7 @@
         const size = extractSize(p);
         return `
         <a class="post-card" href="${escapeAttr(postHref(p))}" target="${postTarget(p)}" rel="noopener noreferrer">
-          <div class="post-cover"><img src="${escapeAttr(thumbUrl(p.cover || "", 360))}" alt="" loading="lazy" decoding="async" /></div>
+          <div class="post-cover"><img src="${escapeAttr(coverUrl(p, 360))}" alt="" loading="lazy" decoding="async" /></div>
           <div class="post-body">
             <h3>${titleWithPriceHtml(p)}</h3>
             <p class="post-summary">${escapeHtml(p.subtitle || p.summary || "")}</p>
