@@ -940,11 +940,21 @@ def write_content(data: dict) -> None:
         write_views(views)
         write_content_local(data)
         mark_views_dirty()
-    # Best-effort immediate persist
+    # Persist to GitHub when token is set; otherwise free-tier disk is wiped on redeploy
+    if not github_enabled():
+        sys.stdout.write(
+            "WARN: GITHUB_TOKEN unset — content saved to ephemeral disk only; "
+            "redeploy may restore stale repo content.json until backup Action runs.\n"
+        )
+        return
     try:
         flush_views_to_github(force=True)
-    except Exception:  # noqa: BLE001
-        write_content_to_github(data)
+    except Exception as exc:  # noqa: BLE001
+        sys.stdout.write(f"GitHub flush failed, trying direct write: {exc}\n")
+        try:
+            write_content_to_github(data)
+        except Exception as exc2:  # noqa: BLE001
+            sys.stdout.write(f"GitHub write failed: {exc2}\n")
 
 
 def increment_view(post_id: str, client_key: str) -> tuple[bool, int]:
