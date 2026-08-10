@@ -1027,6 +1027,10 @@ select {
   color: var(--muted);
 }
 
+.search-empty[hidden] {
+  display: none !important;
+}
+
 .search-empty .btn {
   margin-top: 12px;
   display: inline-flex;
