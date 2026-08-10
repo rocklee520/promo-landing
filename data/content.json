@@ -7,8 +7,7 @@
     "pay": {
       "wechatQr": "",
       "alipayQr": "",
-      "note": "付款时请在备注/说明里填写订单号，付完回到本页点「我已付款」。",
-      "pushPlusToken": ""
+      "note": "付款时请在备注/说明里填写订单号，付完回到本页点「我已付款」。"
     },
     "contentUpdatedAt": "2026-08-10T15:33:27Z"
   },
@@ -76,7 +75,8 @@
       "hot": true,
       "hidden": false,
       "price": "10",
-      "updatedAt": "2026-08-10T12:22:59Z"
+      "updatedAt": "2026-08-10T12:22:59Z",
+      "purchaseRequired": false
     },
     {
       "id": "anzhuo-shenqi-006",
