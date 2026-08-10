@@ -246,7 +246,7 @@
         ${gallery
           .map(
             (src) =>
-              `<p class="note-img-wrap"><img src="${escapeAttr(thumbUrl(src, 720))}" data-full="${escapeAttr(src)}" alt="" loading="lazy" decoding="async" /></p>`
+              `<p class="note-img-wrap"><img src="${escapeAttr(thumbUrl(src, 480))}" data-full="${escapeAttr(src)}" alt="" loading="lazy" decoding="async" /></p>`
           )
           .join("")}
       </div>
