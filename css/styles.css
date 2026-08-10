@@ -692,10 +692,45 @@ select {
     grid-template-columns: 1fr;
   }
 
+  .topbar-inner {
+    align-items: stretch;
+  }
+
+  .main-nav {
+    order: 2;
+    flex: 1 1 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .main-nav::-webkit-scrollbar {
+    display: none;
+  }
+
   .search-form {
     order: 3;
     flex: 1 1 100%;
     max-width: none;
+    min-width: 0;
+    width: 100%;
+  }
+
+  .search-form input {
+    font-size: 16px; /* prevent iOS zoom */
+    color: #fff;
+    -webkit-text-fill-color: #fff;
+  }
+
+  .search-form button {
+    flex: 0 0 auto;
+    min-width: 64px;
+    min-height: 44px;
+    padding: 10px 18px;
+  }
+
+  .top-actions {
+    order: 1;
   }
 }
 
