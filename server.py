@@ -31,6 +31,10 @@ THUMBS_DIR = DATA_DIR / "thumbs"
 HOST = os.environ.get("HOST", "0.0.0.0")
 PORT = int(os.environ.get("PORT", "8787"))
 THUMB_WIDTHS = {240, 360, 480, 720, 960}
+# Free Render instances are ~512MB; avoid loading many full images at once.
+THUMB_MAX_SRC_BYTES = int(os.environ.get("THUMB_MAX_SRC_BYTES", str(1_500_000)))
+THUMB_SEM = threading.Semaphore(int(os.environ.get("THUMB_CONCURRENCY", "1")))
+STATIC_CHUNK = 64 * 1024
 
 # Persist across Render redeploys via GitHub (public raw read; token optional for write-back)
 GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN", "").strip()
@@ -106,36 +110,53 @@ def resolve_asset_path(url_path: str) -> Path | None:
     return candidate
 
 
+def is_animated_image(src: Path) -> bool:
+    suf = src.suffix.lower()
+    if suf == ".gif":
+        return True
+    if suf != ".webp":
+        return False
+    try:
+        with src.open("rb") as fh:
+            head = fh.read(64)
+        return len(head) > 20 and head[12:16] == b"VP8X" and bool(head[20] & 0x02)
+    except OSError:
+        return False
+
+
 def make_thumb_bytes(src: Path, width: int) -> tuple[bytes, str]:
     """Return (bytes, content_type) WebP thumbnail, falling back to JPEG."""
     from PIL import Image, ImageOps  # lazy import
+    import io
+
+    # Cap decode size to avoid huge RGBA buffers on free instances
+    Image.MAX_IMAGE_PIXELS = 25_000_000
 
     with Image.open(src) as im:
         im = ImageOps.exif_transpose(im)
+        # Prefer thumbnail() over full-res decode+resize when possible
+        try:
+            im.draft("RGB", (width, width * 4))
+        except Exception:  # noqa: BLE001
+            pass
         if im.mode not in ("RGB", "RGBA"):
             im = im.convert("RGBA" if "A" in im.getbands() else "RGB")
-        w, h = im.size
-        if w > width:
-            nh = max(1, int(h * (width / float(w))))
-            im = im.resize((width, nh), Image.Resampling.LANCZOS)
-        import io
-
+        im.thumbnail((width, width * 4), Image.Resampling.BILINEAR)
         buf = io.BytesIO()
         try:
-            # Flatten alpha onto white for smaller webp/jpeg
             if im.mode == "RGBA":
                 bg = Image.new("RGB", im.size, (255, 255, 255))
                 bg.paste(im, mask=im.split()[-1])
                 im = bg
             elif im.mode != "RGB":
                 im = im.convert("RGB")
-            im.save(buf, format="WEBP", quality=72, method=4)
+            im.save(buf, format="WEBP", quality=70, method=0)
             return buf.getvalue(), "image/webp"
         except Exception:  # noqa: BLE001
             buf = io.BytesIO()
             if im.mode != "RGB":
                 im = im.convert("RGB")
-            im.save(buf, format="JPEG", quality=78, optimize=True)
+            im.save(buf, format="JPEG", quality=75, optimize=True)
             return buf.getvalue(), "image/jpeg"
 
 
@@ -158,15 +179,21 @@ def get_or_create_thumb(src: Path, width: int) -> tuple[bytes, str]:
         return cache_path.read_bytes(), "image/webp"
     if cache_jpg.exists():
         return cache_jpg.read_bytes(), "image/jpeg"
-    data, ctype = make_thumb_bytes(src, width)
-    try:
-        out = cache_path if ctype == "image/webp" else cache_jpg
-        tmp = out.with_suffix(out.suffix + ".tmp")
-        tmp.write_bytes(data)
-        tmp.replace(out)
-    except Exception as exc:  # noqa: BLE001
-        sys.stdout.write(f"thumb cache write skipped: {exc}\n")
-    return data, ctype
+    with THUMB_SEM:
+        # Re-check cache after waiting (another thread may have filled it)
+        if cache_path.exists():
+            return cache_path.read_bytes(), "image/webp"
+        if cache_jpg.exists():
+            return cache_jpg.read_bytes(), "image/jpeg"
+        data, ctype = make_thumb_bytes(src, width)
+        try:
+            out = cache_path if ctype == "image/webp" else cache_jpg
+            tmp = out.with_suffix(out.suffix + ".tmp")
+            tmp.write_bytes(data)
+            tmp.replace(out)
+        except Exception as exc:  # noqa: BLE001
+            sys.stdout.write(f"thumb cache write skipped: {exc}\n")
+        return data, ctype
 
 
 def _read_json(path: Path) -> dict:
@@ -1033,6 +1060,36 @@ class Handler(BaseHTTPRequestHandler):
             compressible=compressible,
         )
 
+    def _redirect(self, location: str, *, cache_control: str = "public, max-age=3600") -> None:
+        self.send_response(302)
+        self.send_header("Location", location)
+        self.send_header("Cache-Control", cache_control)
+        self._cors()
+        self.send_header("Content-Length", "0")
+        self.end_headers()
+
+    def _stream_file(
+        self,
+        file_path: Path,
+        content_type: str,
+        *,
+        cache_control: str = "public, max-age=86400",
+    ) -> None:
+        """Send a file in chunks so concurrent asset requests don't OOM."""
+        size = file_path.stat().st_size
+        self.send_response(200)
+        self.send_header("Content-Type", content_type)
+        self.send_header("Cache-Control", cache_control)
+        self.send_header("Content-Length", str(size))
+        self._cors()
+        self.end_headers()
+        with file_path.open("rb") as fh:
+            while True:
+                chunk = fh.read(STATIC_CHUNK)
+                if not chunk:
+                    break
+                self.wfile.write(chunk)
+
     def _client_key(self) -> str:
         # Prefer cookie token; fallback to IP
         cookie = SimpleCookie()
@@ -1082,28 +1139,15 @@ class Handler(BaseHTTPRequestHandler):
             if not asset:
                 self._json(404, {"error": "image not found"})
                 return
+            # Never buffer animated / huge originals in /img — redirect to static path
             try:
-                # Keep animated GIF / animated WebP intact (don't freeze frames)
-                suf = asset.suffix.lower()
-                if suf in {".gif", ".webp"}:
-                    with asset.open("rb") as fh:
-                        head = fh.read(64)
-                    animated = suf == ".gif" or (
-                        len(head) > 20
-                        and head[12:16] == b"VP8X"
-                        and bool(head[20] & 0x02)
-                    )
-                    if animated:
-                        data = asset.read_bytes()
-                        ctype = "image/gif" if suf == ".gif" else "image/webp"
-                        self._bytes(
-                            200,
-                            data,
-                            ctype,
-                            cache_control="public, max-age=604800, immutable",
-                            compressible=False,
-                        )
-                        return
+                src_size = asset.stat().st_size
+            except OSError:
+                src_size = 0
+            if is_animated_image(asset) or src_size > THUMB_MAX_SRC_BYTES:
+                self._redirect(src_url, cache_control="public, max-age=86400")
+                return
+            try:
                 data, ctype = get_or_create_thumb(asset, width)
                 self._bytes(
                     200,
@@ -1113,17 +1157,8 @@ class Handler(BaseHTTPRequestHandler):
                     compressible=False,
                 )
             except Exception as exc:  # noqa: BLE001
-                # Fallback: serve original file if thumb fails
                 sys.stdout.write(f"thumb failed {src_url}: {exc}\n")
-                raw = asset.read_bytes()
-                guess = mimetypes.guess_type(str(asset))[0] or "image/jpeg"
-                self._bytes(
-                    200,
-                    raw,
-                    guess,
-                    cache_control="public, max-age=86400",
-                    compressible=False,
-                )
+                self._redirect(src_url, cache_control="public, max-age=3600")
             return
 
         if path == "/api/orders":
@@ -1190,7 +1225,6 @@ class Handler(BaseHTTPRequestHandler):
                 self._json(404, {"error": "not found"})
                 return
 
-        data = file_path.read_bytes()
         ctype = mimetypes.guess_type(str(file_path))[0] or "application/octet-stream"
         if file_path.suffix in {".html", ".css", ".js", ".json"}:
             ctype = {
@@ -1200,19 +1234,30 @@ class Handler(BaseHTTPRequestHandler):
                 ".json": "application/json; charset=utf-8",
             }[file_path.suffix]
         # Cache static assets on mobile; HTML stays short-lived
-        if "/assets/" in str(file_path).replace("\\", "/") or file_path.suffix.lower() in {
-            ".jpg",
-            ".jpeg",
-            ".png",
-            ".webp",
-            ".gif",
-            ".svg",
-            ".ico",
-            ".woff2",
-        }:
+        is_binary_asset = (
+            "/assets/" in str(file_path).replace("\\", "/")
+            or file_path.suffix.lower()
+            in {
+                ".jpg",
+                ".jpeg",
+                ".png",
+                ".webp",
+                ".gif",
+                ".svg",
+                ".ico",
+                ".woff2",
+            }
+        )
+        if is_binary_asset:
             cache = "public, max-age=604800, immutable"
-            compressible = file_path.suffix.lower() in {".svg", ".ico"}
-        elif file_path.suffix in {".css", ".js"}:
+            # Stream images/fonts — never hold full file + gzip copy in RAM
+            if file_path.suffix.lower() in {".svg", ".ico"}:
+                data = file_path.read_bytes()
+                self._bytes(200, data, ctype, cache_control=cache, compressible=True)
+            else:
+                self._stream_file(file_path, ctype, cache_control=cache)
+            return
+        if file_path.suffix in {".css", ".js"}:
             cache = "public, max-age=86400"
             compressible = True
         elif file_path.suffix == ".html":
@@ -1221,6 +1266,7 @@ class Handler(BaseHTTPRequestHandler):
         else:
             cache = "public, max-age=300"
             compressible = True
+        data = file_path.read_bytes()
         self._bytes(200, data, ctype, cache_control=cache, compressible=compressible)
 
     def do_POST(self) -> None:  # noqa: N802
