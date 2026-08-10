@@ -168,7 +168,7 @@ window.Promo = (() => {
       input.setAttribute("enterkeyhint", "search");
       input.setAttribute("autocapitalize", "off");
       input.setAttribute("autocomplete", "off");
-      input.setAttribute("correct", "off");
+      input.setAttribute("spellcheck", "false");
       // iOS Safari: avoid zoom-on-focus without tiny text
       if (!input.style.fontSize) input.style.fontSize = "16px";
     }
