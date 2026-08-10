@@ -4,6 +4,7 @@
     escapeAttr,
     titleWithPriceHtml,
     thumbUrl,
+    coverUrl,
     loadContent,
     searchPosts,
     postHref,
@@ -49,7 +50,7 @@
         .map(
           (p) => `
         <a class="search-card" href="${escapeAttr(postHref(p))}" target="${postTarget(p)}" rel="noopener noreferrer">
-          <div class="search-cover"><img src="${escapeAttr(thumbUrl(p.cover || "", 360))}" alt="" loading="lazy" decoding="async" /></div>
+          <div class="search-cover"><img src="${escapeAttr(coverUrl(p, 360))}" alt="" loading="lazy" decoding="async" /></div>
           <div class="search-card-body">
             <h3>${titleWithPriceHtml(p)}</h3>
             <p>${escapeHtml(p.subtitle || p.summary || "")}</p>
