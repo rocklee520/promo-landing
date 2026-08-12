@@ -10,7 +10,7 @@
       "note": "付款时请在备注/说明里填写订单号，付完回到本页点「我已付款」。",
       "pushPlusToken": ""
     },
-    "contentUpdatedAt": "2026-08-12T03:05:08Z"
+    "contentUpdatedAt": "2026-08-12T03:24:26Z"
   },
   "nav": [
     "全部",
@@ -37,6 +37,46 @@
     "图片"
   ],
   "posts": [
+    {
+      "id": "beautyleg-dacidu-10g",
+      "title": "beautyleg大尺度系列10G",
+      "subtitle": "",
+      "cover": "/assets/beautyleg-dacidu-10g/01.jpg",
+      "summary": "",
+      "downloadNote": "本资源支持 百度盘 下载",
+      "updates": "",
+      "link": "",
+      "gallery": [
+        "/assets/beautyleg-dacidu-10g/01.jpg",
+        "/assets/beautyleg-dacidu-10g/02.jpg",
+        "/assets/beautyleg-dacidu-10g/03.jpg",
+        "/assets/beautyleg-dacidu-10g/04.jpg",
+        "/assets/beautyleg-dacidu-10g/05.jpg",
+        "/assets/beautyleg-dacidu-10g/06.jpg",
+        "/assets/beautyleg-dacidu-10g/07.jpg",
+        "/assets/beautyleg-dacidu-10g/08.jpg",
+        "/assets/beautyleg-dacidu-10g/09.jpg",
+        "/assets/beautyleg-dacidu-10g/10.jpg",
+        "/assets/beautyleg-dacidu-10g/11.jpg",
+        "/assets/beautyleg-dacidu-10g/12.jpg",
+        "/assets/beautyleg-dacidu-10g/13.jpg",
+        "/assets/beautyleg-dacidu-10g/14.jpg"
+      ],
+      "tags": [
+        "机构系列",
+        "机构",
+        "beautyleg",
+        "热门"
+      ],
+      "series": "机构系列",
+      "views": 0,
+      "date": "2026-08-12",
+      "featured": true,
+      "hot": true,
+      "price": "8",
+      "updatedAt": "2026-08-12T03:23:42.179Z",
+      "purchaseRequired": false
+    },
     {
       "id": "taonaomu-xiangnai-42g",
       "title": "桃乃木香奈42G合集",
@@ -87,7 +127,7 @@
         "热门"
       ],
       "series": "网红系列",
-      "views": 0,
+      "views": 1,
       "date": "2026-08-12",
       "featured": true,
       "hot": true,
