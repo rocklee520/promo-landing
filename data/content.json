@@ -7,9 +7,10 @@
     "pay": {
       "wechatQr": "",
       "alipayQr": "",
-      "note": "付款时请在备注/说明里填写订单号，付完回到本页点「我已付款」。"
+      "note": "付款时请在备注/说明里填写订单号，付完回到本页点「我已付款」。",
+      "pushPlusToken": ""
     },
-    "contentUpdatedAt": "2026-08-12T14:04:16Z"
+    "contentUpdatedAt": "2026-08-13T15:05:44Z"
   },
   "nav": [
     "全部",
@@ -1038,16 +1039,16 @@
         "网红系列",
         "网红",
         "tuzaibaby",
-        "热门"
+        "兔子"
       ],
       "series": "网红系列",
       "views": 13,
       "date": "2026-07-12",
       "featured": true,
       "hot": true,
-      "price": "12",
-      "updatedAt": "2026-08-09T02:15:29.103Z",
-      "hidden": true,
+      "price": "10",
+      "updatedAt": "2026-08-13T15:05:44Z",
+      "hidden": false,
       "purchaseRequired": false
     },
     {
