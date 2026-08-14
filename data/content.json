@@ -7,9 +7,10 @@
     "pay": {
       "wechatQr": "",
       "alipayQr": "",
-      "note": "付款时请在备注/说明里填写订单号，付完回到本页点「我已付款」。"
+      "note": "付款时请在备注/说明里填写订单号，付完回到本页点「我已付款」。",
+      "pushPlusToken": ""
     },
-    "contentUpdatedAt": "2026-08-14T01:07:54Z"
+    "contentUpdatedAt": "2026-08-14T05:44:34Z"
   },
   "nav": [
     "全部",
@@ -46,7 +47,21 @@
       "updates": "",
       "link": "",
       "gallery": [
-        "/assets/yuumeilyn/01.png"
+        "/assets/yuumeilyn/01.png",
+        "/assets/yuumeilyn/02.webp",
+        "/assets/yuumeilyn/03.webp",
+        "/assets/yuumeilyn/04.webp",
+        "/assets/yuumeilyn/05.webp",
+        "/assets/yuumeilyn/06.webp",
+        "/assets/yuumeilyn/07.webp",
+        "/assets/yuumeilyn/08.webp",
+        "/assets/yuumeilyn/09.webp",
+        "/assets/yuumeilyn/10.webp",
+        "/assets/yuumeilyn/11.webp",
+        "/assets/yuumeilyn/12.webp",
+        "/assets/yuumeilyn/13.webp",
+        "/assets/yuumeilyn/14.webp",
+        "/assets/yuumeilyn/15.webp"
       ],
       "tags": [
         "网红系列",
@@ -64,8 +79,7 @@
       "hidden": false,
       "price": "10",
       "size": "88.21G",
-      "updatedAt": "2026-08-14T01:07:54Z",
-      "purchaseRequired": false
+      "updatedAt": "2026-08-14T05:44:34Z"
     },
     {
       "id": "sudaji-huwai-160g",
