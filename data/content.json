@@ -7,8 +7,7 @@
     "pay": {
       "wechatQr": "",
       "alipayQr": "",
-      "note": "付款时请在备注/说明里填写订单号，付完回到本页点「我已付款」。",
-      "pushPlusToken": ""
+      "note": "付款时请在备注/说明里填写订单号，付完回到本页点「我已付款」。"
     },
     "contentUpdatedAt": "2026-08-14T01:07:54Z"
   },
@@ -65,7 +64,8 @@
       "hidden": false,
       "price": "10",
       "size": "88.21G",
-      "updatedAt": "2026-08-14T01:07:54Z"
+      "updatedAt": "2026-08-14T01:07:54Z",
+      "purchaseRequired": false
     },
     {
       "id": "sudaji-huwai-160g",
