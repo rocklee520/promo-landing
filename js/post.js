@@ -278,7 +278,7 @@
         root.innerHTML = `<div class="empty">${post?.hidden ? "该内容已下架。" : "未找到内容。"} <a href="/">返回首页</a></div>`;
         return;
       }
-      renderSiteChrome(data, { activeNav: post.series || "全部" });
+      renderSiteChrome(data, { activeNav: "全部" });
       renderPost(post);
       const result = await trackView(post.id);
       if (result && typeof result.views === "number") {

@@ -84,9 +84,11 @@ def upsert_live(
     posts: list[dict] | None = None,
     site: dict | None = None,
     *,
+    nav: list | None = None,
+    tags: list | None = None,
     password: str | None = None,
 ) -> dict:
-    """Push only changed posts/site fields into live; never replace whole catalog."""
+    """Push only changed posts/site/nav/tags into live; never replace whole catalog."""
     pw = (password or ADMIN_PASSWORD).strip()
     if not pw:
         raise SystemExit("ADMIN_PASSWORD required for upsert_live")
@@ -95,8 +97,12 @@ def upsert_live(
         payload["posts"] = posts
     if site:
         payload["site"] = site
-    if not payload.get("posts") and "site" not in payload:
-        raise SystemExit("upsert_live needs posts and/or site")
+    if nav is not None:
+        payload["nav"] = nav
+    if tags is not None:
+        payload["tags"] = tags
+    if not payload.get("posts") and "site" not in payload and "nav" not in payload and "tags" not in payload:
+        raise SystemExit("upsert_live needs posts and/or site and/or nav/tags")
     # Never use PUT /api/content from scripts — that path is for admin UI only.
     try:
         return _req(

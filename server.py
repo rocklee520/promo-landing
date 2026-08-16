@@ -582,6 +582,12 @@ def upsert_posts_into(content: dict, posts: list) -> dict:
             keep = _fill_empties(json.loads(json.dumps(src)), cur)
             # Explicit incoming fields win even if empty when key present? Prefer fill empties for safety.
             keep["views"] = views
+            # Allow scripts/admin to clear deprecated series classification.
+            if "series" in src and not str(src.get("series") or "").strip():
+                keep["series"] = ""
+            # Allow explicit tags rewrite (including clearing series-named tags).
+            if "tags" in src and isinstance(src.get("tags"), list):
+                keep["tags"] = src.get("tags")
             if not keep.get("updatedAt"):
                 keep["updatedAt"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
             by_id[pid] = keep
@@ -1048,17 +1054,18 @@ def increment_view(post_id: str, client_key: str) -> tuple[bool, int]:
 class Handler(BaseHTTPRequestHandler):
     server_version = "PromoLanding/1.0"
 
-    def handle(self) -> None:
-        # Bound concurrent connections — ThreadingHTTPServer is otherwise unlimited
+    def handle_one_request(self) -> None:
+        # Bound concurrent in-flight requests (not whole keep-alive connections)
         acquired = REQUEST_SEM.acquire(timeout=3)
         if not acquired:
             try:
                 self.send_error(503, "Server busy")
             except Exception:  # noqa: BLE001
                 pass
+            self.close_connection = True
             return
         try:
-            super().handle()
+            super().handle_one_request()
         finally:
             REQUEST_SEM.release()
 

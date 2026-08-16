@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>管理后台 · 小米素材站</title>
-  <link rel="stylesheet" href="/css/styles.css" />
+  <link rel="stylesheet" href="/css/styles.css?v=20260816a" />
 </head>
 <body class="admin-body">
   <div class="admin-shell">
@@ -33,7 +33,8 @@
           </div>
           <label>页脚文案<input id="cfgFooter" /></label>
           <label>管理密码（保存后生效）<input id="cfgPassword" type="text" /></label>
-          <label>标签（逗号分隔）<input id="cfgTags" placeholder="全部,最新,热门,视频,图片" /></label>
+          <label>搜索热词（逗号分隔）<input id="cfgHotKeywords" placeholder="合集,自慰,福利姬,反差,女神,推特,白虎,萝莉" /></label>
+          <label>标签词库（逗号分隔，用于后台参考）<input id="cfgTags" placeholder="合集,反差,网红,OnlyFans,视频,图片" /></label>
           <div class="row-2">
             <label>微信收款码图片 URL<input id="cfgWechatQr" placeholder="/assets/pay/wechat.jpg" /></label>
             <label>支付宝收款码图片 URL<input id="cfgAlipayQr" placeholder="/assets/pay/alipay.jpg" /></label>
@@ -70,16 +71,8 @@
           <label>公开链接（免费内容用；付费请留空）<input id="editLink" placeholder="https://..." /></label>
           <label>发货链接（百度云，付费确认后才显示）<input id="editFulfillment" placeholder="https://pan.baidu.com/s/..." /></label>
           <label>图集（每行一个图片 URL）<textarea id="editGallery" placeholder="/assets/kiki/01.jpeg"></textarea></label>
-          <div class="row-2">
-            <label>系列页签
-              <select id="editSeries">
-                <option value="">无</option>
-                <option value="直播系列">直播系列</option>
-                <option value="网红系列">网红系列</option>
-              </select>
-            </label>
-            <label>标签（逗号分隔）<input id="editTags" placeholder="直播系列,直播,kiki酱" /></label>
-          </div>
+          <label>搜索关键词 / 标签（逗号分隔）<input id="editTags" placeholder="合集,反差,网红,OnlyFans" /></label>
+          <input id="editSeries" type="hidden" value="" />
           <div class="row-2">
             <label>日期<input id="editDate" type="date" /></label>
             <label>浏览数<input id="editViews" type="number" min="0" value="0" /></label>
@@ -123,6 +116,6 @@
   </div>
 
   <div class="toast" id="toast"></div>
-  <script src="/js/admin.js"></script>
+  <script src="/js/admin.js?v=20260816a"></script>
 </body>
 </html>

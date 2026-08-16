@@ -13,9 +13,6 @@
     renderSiteChrome,
   } = window.Promo;
 
-  const params = new URLSearchParams(location.search);
-  const seriesParam = params.get("series") || "";
-
   const state = {
     data: null,
     rankMode: "hot",
@@ -32,6 +29,7 @@
     sortTabs: document.getElementById("sortTabs"),
     postList: document.getElementById("postList"),
     allTitle: document.getElementById("allTitle"),
+    hotKeywords: document.getElementById("hotKeywords"),
   };
 
   bindSearchForm(document.getElementById("searchForm"));
@@ -40,13 +38,9 @@
     return window.Promo.publicPosts(state.data?.posts);
   }
 
-  function inSeries(p, series) {
-    if (!series || series === "全部") return true;
-    return p.series === series || (p.tags || []).includes(series);
-  }
-
   function renderAll() {
-    renderSiteChrome(state.data, { activeNav: seriesParam || "全部" });
+    renderSiteChrome(state.data, { activeNav: "全部" });
+    window.Promo.renderHotKeywords(state.data, els.hotKeywords);
     renderCarousel();
     renderRank();
     renderPosts();
@@ -54,7 +48,7 @@
 
   function featuredPosts() {
     // 轮播：最新上架封面（按 updatedAt / date）
-    const scoped = posts().filter((p) => inSeries(p, seriesParam) && p.cover);
+    const scoped = posts().filter((p) => p.cover);
     return scoped.slice().sort(compareNewest).slice(0, 5);
   }
 
@@ -106,7 +100,7 @@
 
   function rankedPosts() {
     // 热门排行：按真实浏览量
-    let list = posts().filter((p) => inSeries(p, seriesParam));
+    let list = posts().slice();
     if (state.rankMode === "newest") {
       list.sort(compareNewest);
     } else {
@@ -145,7 +139,7 @@
   }
 
   function filteredSortedPosts() {
-    const list = posts().filter((p) => inSeries(p, seriesParam));
+    const list = posts().slice();
     if (state.sortMode === "oldest") {
       list.sort((a, b) => compareNewest(b, a));
     } else if (state.sortMode === "views") {
@@ -162,10 +156,9 @@
 
   function renderPosts() {
     const list = filteredSortedPosts();
-    const label = seriesParam || "全部内容";
-    els.allTitle.textContent = `${label}（${list.length}）`;
+    els.allTitle.textContent = `全部内容（${list.length}）`;
     if (!list.length) {
-      els.postList.innerHTML = '<div class="empty">该分类下暂无内容</div>';
+      els.postList.innerHTML = '<div class="empty">暂无内容</div>';
       return;
     }
     els.postList.innerHTML = list

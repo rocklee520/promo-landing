@@ -35,8 +35,20 @@
       note: "付款时请在备注/说明里填写订单号，付完回到本页点「我已付款」。",
       pushPlusToken: "",
     };
-    data.tags ||= ["全部", "直播系列", "网红系列", "机构系列", "岛国系列", "TP系列", "舞蹈系列", "软件系列", "AI系列", "视频", "图片"];
-    data.nav ||= ["全部", "直播系列", "网红系列", "机构系列", "岛国系列", "TP系列", "舞蹈系列", "软件系列", "AI系列"];
+    if (!Array.isArray(data.site.hotKeywords) || !data.site.hotKeywords.length) {
+      data.site.hotKeywords = [
+        "合集",
+        "自慰",
+        "福利姬",
+        "反差",
+        "女神",
+        "推特",
+        "白虎",
+        "萝莉",
+      ];
+    }
+    data.tags ||= ["合集", "反差", "网红", "OnlyFans", "视频", "图片"];
+    data.nav ||= ["全部"];
     data.posts ||= [];
   }
 
@@ -48,6 +60,7 @@
     $("cfgFooter").value = data.site.footer || "";
     $("cfgPassword").value = "";
     $("cfgPassword").placeholder = "留空则不修改密码";
+    $("cfgHotKeywords").value = (data.site.hotKeywords || []).join(",");
     $("cfgTags").value = (data.tags || []).join(",");
     const pay = data.site.pay || {};
     $("cfgWechatQr").value = pay.wechatQr || "";
@@ -104,11 +117,15 @@
     data.site.pay.note = $("cfgPayNote").value.trim();
     const pp = $("cfgPushPlus").value.trim();
     data.site.pay.pushPlusToken = pp; // blank => server keeps old
+    data.site.hotKeywords = $("cfgHotKeywords").value
+      .split(/[,，]/)
+      .map((s) => s.trim())
+      .filter(Boolean);
     data.tags = $("cfgTags").value
       .split(/[,，]/)
       .map((s) => s.trim())
       .filter(Boolean);
-    if (!data.tags.includes("全部")) data.tags.unshift("全部");
+    data.nav = ["全部"];
   }
 
   function flagsFromSelect(v) {
@@ -168,12 +185,11 @@
     if (!title) return toast("请填写标题");
     const flags = flagsFromSelect($("editFlags").value);
     const id = $("editId").value || `post-${Date.now()}`;
-    const series = $("editSeries").value.trim();
-    let tags = $("editTags").value
+    const tags = $("editTags").value
       .split(/[,，]/)
       .map((s) => s.trim())
-      .filter(Boolean);
-    if (series && !tags.includes(series)) tags = [series, ...tags];
+      .filter(Boolean)
+      .filter((t) => !/系列$/.test(t));
     const existing = data.posts.find((p) => p.id === id) || {};
     const item = {
       ...existing,
@@ -190,7 +206,7 @@
         .split(/\r?\n/)
         .map((s) => s.trim())
         .filter(Boolean),
-      series,
+      series: "",
       tags,
       date: $("editDate").value || new Date().toISOString().slice(0, 10),
       views: Number($("editViews").value || 0),

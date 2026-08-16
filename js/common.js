@@ -138,6 +138,47 @@ window.Promo = (() => {
     return (Array.isArray(posts) ? posts : []).filter(isPublicPost);
   }
 
+  const DEFAULT_HOT_KEYWORDS = [
+    "合集",
+    "自慰",
+    "福利姬",
+    "反差",
+    "女神",
+    "推特",
+    "白虎",
+    "萝莉",
+  ];
+
+  function hotKeywords(data) {
+    const fromSite = data?.site?.hotKeywords;
+    if (Array.isArray(fromSite) && fromSite.length) {
+      return fromSite.map((s) => String(s || "").trim()).filter(Boolean);
+    }
+    return DEFAULT_HOT_KEYWORDS.slice();
+  }
+
+  function renderHotKeywords(data, container, { active } = {}) {
+    if (!container) return;
+    const words = hotKeywords(data);
+    if (!words.length) {
+      container.innerHTML = "";
+      container.hidden = true;
+      return;
+    }
+    container.hidden = false;
+    const activeWord = String(active || "").trim();
+    container.innerHTML = `
+      <span class="hot-keywords-label">搜索热词</span>
+      <div class="hot-keywords-list">
+        ${words
+          .map((w) => {
+            const on = activeWord && activeWord === w;
+            return `<a class="hot-keyword ${on ? "active" : ""}" href="/search.html?keyword=${encodeURIComponent(w)}">${escapeHtml(w)}</a>`;
+          })
+          .join("")}
+      </div>`;
+  }
+
   function searchPosts(posts, keyword) {
     const q = String(keyword || "").trim().toLowerCase();
     if (!q) return [];
@@ -150,7 +191,6 @@ window.Promo = (() => {
         p.price,
         p.downloadNote,
         ...(p.tags || []),
-        p.series,
       ]
         .filter(Boolean)
         .join(" ")
@@ -201,19 +241,9 @@ window.Promo = (() => {
 
     const nav = document.getElementById("mainNav");
     if (nav) {
-      const items = data.nav?.length ? data.nav : ["全部", "直播系列"];
-      nav.innerHTML = items
-        .map((item) => {
-          const href =
-            item === "全部"
-              ? "/"
-              : `/?series=${encodeURIComponent(item)}`;
-          const active =
-            activeNav === item ||
-            (!activeNav && item === "全部" && !new URLSearchParams(location.search).get("series"));
-          return `<a class="nav-link ${active ? "active" : ""}" href="${href}">${escapeHtml(item)}</a>`;
-        })
-        .join("");
+      // No series classification — top nav is home only (baseline-style keyword search).
+      const onHome = location.pathname === "/" || location.pathname.endsWith("/index.html");
+      nav.innerHTML = `<a class="nav-link ${onHome ? "active" : ""}" href="/">全部</a>`;
     }
   }
 
@@ -235,5 +265,8 @@ window.Promo = (() => {
     searchPosts,
     bindSearchForm,
     renderSiteChrome,
+    hotKeywords,
+    renderHotKeywords,
+    DEFAULT_HOT_KEYWORDS,
   };
 })();

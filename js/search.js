@@ -31,9 +31,14 @@
   loadContent({ lite: true })
     .then((data) => {
       renderSiteChrome(data, { activeNav: null });
+      window.Promo.renderHotKeywords(data, document.getElementById("hotKeywords"), {
+        active: keyword,
+      });
       if (!keyword) {
-        countEl.textContent = "请输入关键词";
-        empty.hidden = false;
+        countEl.textContent = "点击上方热词，或输入关键词搜索";
+        empty.hidden = true;
+        empty.style.display = "none";
+        grid.innerHTML = "";
         return;
       }
       const results = searchPosts(data.posts || [], keyword);
