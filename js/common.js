@@ -229,21 +229,31 @@ window.Promo = (() => {
 
   function renderSiteChrome(data, { activeNav } = {}) {
     const site = data.site || {};
+    const name = site.name || "小米素材站";
+    const sub = site.subtitle || "";
     const nameEl = document.getElementById("siteName");
     const subEl = document.getElementById("siteSub");
     const footEl = document.getElementById("siteFooter");
-    if (nameEl) nameEl.textContent = site.name || "小米素材站";
-    if (subEl) subEl.textContent = site.subtitle || "";
+    const heroName = document.getElementById("heroSiteName");
+    const heroSub = document.getElementById("heroSiteSub");
+    const footerName = document.getElementById("footerName");
+    const footerSub = document.getElementById("footerSub");
+    if (nameEl) nameEl.textContent = name;
+    if (subEl) subEl.textContent = sub;
+    if (heroName) heroName.textContent = name;
+    if (heroSub) heroSub.textContent = sub || "稀有精品预览";
+    if (footerName) footerName.textContent = name;
+    if (footerSub) footerSub.textContent = sub || "素材预览";
     if (footEl) footEl.textContent = site.footer || "";
     document.title = document.title.includes("搜索")
       ? document.title
-      : site.name || document.title;
+      : name || document.title;
 
     const nav = document.getElementById("mainNav");
     if (nav) {
       // No series classification — top nav is home only (baseline-style keyword search).
       const onHome = location.pathname === "/" || location.pathname.endsWith("/index.html");
-      nav.innerHTML = `<a class="nav-link ${onHome ? "active" : ""}" href="/">全部</a>`;
+      nav.innerHTML = `<a class="nav-link ${onHome ? "active" : ""}" href="/">首页</a>`;
     }
   }
 

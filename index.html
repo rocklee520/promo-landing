@@ -5,21 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>小米素材站</title>
   <meta name="description" content="最新视频 / 图片预览与介绍" />
-  <link rel="stylesheet" href="/css/styles.css?v=20260816a" />
+  <meta name="theme-color" content="#ffffff" />
+  <link rel="stylesheet" href="/css/styles.css?v=20260816b" />
+  <link rel="preload" as="image" href="/assets/site/hero-bg.jpg" />
   <link rel="preconnect" href="/" />
 </head>
 <body>
   <header class="topbar">
     <div class="wrap topbar-inner">
       <a class="brand" href="/">
-        <div class="brand-name" id="siteName">小米素材站</div>
+        <div class="brand-row">
+          <div class="brand-name" id="siteName">小米素材站</div>
+          <span class="brand-dot" aria-hidden="true"></span>
+        </div>
         <div class="brand-sub" id="siteSub">最新视频 / 图片预览与介绍</div>
       </a>
       <nav class="main-nav" id="mainNav"></nav>
-      <form class="search-form" id="searchForm" action="/search.html" method="get">
-        <input type="search" name="keyword" placeholder="搜索资源..." autocomplete="off" />
-        <button type="submit" aria-label="搜索">搜索</button>
-      </form>
       <div class="top-actions">
         <a class="btn" href="/admin.html">管理后台</a>
       </div>
@@ -27,9 +28,28 @@
   </header>
 
   <main>
-    <section class="hero">
+    <section class="hero-banner">
+      <img class="hero-banner-bg" src="/assets/site/hero-bg.jpg" alt="" decoding="async" fetchpriority="high" />
+      <div class="hero-banner-mask" aria-hidden="true"></div>
+      <div class="wrap hero-banner-inner">
+        <h1 class="hero-title">
+          <span id="heroSiteName">小米素材站</span>
+          <span class="hero-title-sub" id="heroSiteSub">最新视频 / 图片预览与介绍</span>
+        </h1>
+        <form class="hero-search" id="searchForm" action="/search.html" method="get">
+          <svg class="hero-search-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="11" cy="11" r="8" fill="none" stroke="currentColor" stroke-width="2" />
+            <path d="m21 21-4.3-4.3" fill="none" stroke="currentColor" stroke-width="2" />
+          </svg>
+          <input type="search" name="keyword" placeholder="搜索关键词，回车搜索..." autocomplete="off" />
+          <button type="submit">搜索</button>
+        </form>
+        <div class="hot-keywords hot-keywords-hero" id="hotKeywords" aria-label="搜索热词"></div>
+      </div>
+    </section>
+
+    <section class="section section-carousel">
       <div class="wrap">
-        <div class="hot-keywords" id="hotKeywords" aria-label="搜索热词"></div>
         <div class="carousel" id="carousel">
           <div class="carousel-track" id="carouselTrack"></div>
           <div class="carousel-dots" id="carouselDots"></div>
@@ -70,10 +90,16 @@
   </main>
 
   <footer class="site-footer">
-    <div class="wrap" id="siteFooter">内容由站长更新维护</div>
+    <div class="wrap site-footer-inner">
+      <div class="footer-brand">
+        <div class="footer-name" id="footerName">小米素材站</div>
+        <div class="footer-sub" id="footerSub">素材预览</div>
+      </div>
+      <div id="siteFooter">内容由站长更新维护</div>
+    </div>
   </footer>
 
-  <script src="/js/common.js?v=20260816a" defer></script>
-  <script src="/js/app.js?v=20260816a" defer></script>
+  <script src="/js/common.js?v=20260816b" defer></script>
+  <script src="/js/app.js?v=20260816b" defer></script>
 </body>
 </html>
