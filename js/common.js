@@ -28,19 +28,30 @@ window.Promo = (() => {
     return String(b?.date || "").localeCompare(String(a?.date || ""));
   }
 
-  /** Serve resized WebP via /img. Keep animated covers intact. */
+  /** Prefer prebuilt static list thumbs (fast). Fall back to /img, then original. */
+  function staticListThumb(src, width = 360) {
+    const s = String(src || "").trim();
+    if (!s.startsWith("/assets/")) return "";
+    const w = Number(width) || 360;
+    const bucket = w <= 240 ? 240 : 360;
+    return `/thumbs/list/${bucket}${s}.webp`;
+  }
+
+  /** Serve resized WebP via static thumb or /img. Keep animated covers intact on detail. */
   function thumbUrl(src, width = 480) {
     const s = String(src || "").trim();
     if (!s) return "";
     if (!s.startsWith("/assets/")) return s;
-    // GIF / dedicated animated cover files must not be freeze-framed by /img
+    // GIF / dedicated animated cover files must not be freeze-framed by /img on detail
     if (/\.gif(?:$|\?)/i.test(s) || /\/cover\.(gif|webp)(?:$|\?)/i.test(s)) return s;
     const w = Number(width) || 480;
+    const pre = staticListThumb(s, w <= 360 ? w : 360);
+    if (pre && w <= 360) return pre;
     return `/img?u=${encodeURIComponent(s)}&w=${w}`;
   }
 
-  /** Prefer animated cover (GIF / cover.webp) when available. */
-  function coverUrl(p, width = 480) {
+  /** List/card cover: always prefer tiny static WebP (even for GIF covers). */
+  function coverUrl(p, width = 360) {
     const cover = String(p?.cover || "").trim();
     const gallery = Array.isArray(p?.gallery) ? p.gallery : [];
     const animated = gallery.find((u) =>
@@ -50,7 +61,44 @@ window.Promo = (() => {
     const coverIsAnimated =
       /\.gif(?:$|\?)/i.test(cover) || /\/cover\.(gif|webp)(?:$|\?)/i.test(cover);
     const src = (!coverIsAnimated && animated ? animated : cover) || cover;
-    return thumbUrl(src, width);
+    const w = Number(width) || 360;
+    const pre = staticListThumb(src, w);
+    if (pre) return pre;
+    // Animated full GIF only as last resort for list (slow) — still try /img for stills
+    if (coverIsAnimated || /\.gif(?:$|\?)/i.test(String(src || ""))) {
+      return staticListThumb(cover, w) || cover;
+    }
+    return thumbUrl(src, w);
+  }
+
+  /** img onerror: static thumb -> /img -> original asset */
+  function bindImgFallback(root) {
+    if (!root) return;
+    root.querySelectorAll("img[data-full], img[src*='/thumbs/list/']").forEach((img) => {
+      if (img.dataset.fbBound) return;
+      img.dataset.fbBound = "1";
+      img.addEventListener("error", () => {
+        const full = img.getAttribute("data-full") || "";
+        const src = img.getAttribute("src") || "";
+        const step = Number(img.dataset.fbStep || "0");
+        if (step === 0 && src.includes("/thumbs/list/")) {
+          img.dataset.fbStep = "1";
+          // Extract /assets/... from /thumbs/list/360/assets/....webp
+          const m = src.match(/\/thumbs\/list\/\d+(\/assets\/.+?)\.webp(?:$|\?)/i);
+          const asset = full || (m ? m[1] : "");
+          if (asset) {
+            img.src = `/img?u=${encodeURIComponent(asset)}&w=360`;
+            return;
+          }
+        }
+        if (step <= 1) {
+          img.dataset.fbStep = "2";
+          const m = src.match(/\/thumbs\/list\/\d+(\/assets\/.+?)\.webp(?:$|\?)/i);
+          const asset = full || (m ? m[1] : "");
+          if (asset) img.src = asset;
+        }
+      });
+    });
   }
 
   /** Safe HTML: title + optional price badge */
@@ -263,6 +311,8 @@ window.Promo = (() => {
     formatPrice,
     thumbUrl,
     coverUrl,
+    bindImgFallback,
+    staticListThumb,
     postTime,
     compareNewest,
     titleWithPriceHtml,

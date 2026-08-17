@@ -121,6 +121,22 @@ def resolve_asset_path(url_path: str) -> Path | None:
     return candidate
 
 
+def static_list_thumb_path(src_url: str, width: int) -> Path | None:
+    """Prebuilt list thumb: /thumbs/list/{240|360}/assets/....webp"""
+    raw = str(src_url or "").strip()
+    if not raw.startswith("/assets/"):
+        return None
+    bucket = 240 if int(width or 360) <= 240 else 360
+    rel = raw.lstrip("/")
+    candidate = (ROOT / "thumbs" / "list" / str(bucket) / f"{rel}.webp").resolve()
+    root = (ROOT / "thumbs" / "list").resolve()
+    if not str(candidate).startswith(str(root)):
+        return None
+    if not candidate.is_file():
+        return None
+    return candidate
+
+
 def is_animated_image(src: Path) -> bool:
     suf = src.suffix.lower()
     if suf == ".gif":
@@ -1245,12 +1261,28 @@ class Handler(BaseHTTPRequestHandler):
             if not asset:
                 self._json(404, {"error": "image not found"})
                 return
-            # Never buffer animated / huge originals in /img — redirect to static path
+            # Prefer prebuilt static list thumbs (no Pillow, survives redeploy)
+            static_thumb = static_list_thumb_path(src_url, width if width <= 360 else 360)
+            if static_thumb and width <= 360:
+                self._stream_file(
+                    static_thumb,
+                    "image/webp",
+                    cache_control="public, max-age=604800, immutable",
+                )
+                return
+            # Never buffer animated / huge originals in /img — prefer static still, else redirect
             try:
                 src_size = asset.stat().st_size
             except OSError:
                 src_size = 0
             if is_animated_image(asset) or src_size > THUMB_MAX_SRC_BYTES:
+                if static_thumb:
+                    self._stream_file(
+                        static_thumb,
+                        "image/webp",
+                        cache_control="public, max-age=604800, immutable",
+                    )
+                    return
                 self._redirect(src_url, cache_control="public, max-age=86400")
                 return
             cached = try_cached_thumb(asset, width)
@@ -1264,8 +1296,9 @@ class Handler(BaseHTTPRequestHandler):
                     compressible=False,
                 )
                 return
-            # Cache miss: only generate if free; otherwise redirect (avoids Pillow OOM)
-            if THUMB_GENERATE and THUMB_SEM.acquire(blocking=False):
+            # Cache miss: wait briefly for a slot; prefer static thumb over full original
+            got = THUMB_GENERATE and THUMB_SEM.acquire(timeout=1.5)
+            if got:
                 try:
                     data, ctype = get_or_create_thumb(asset, width)
                     self._bytes(
@@ -1277,9 +1310,23 @@ class Handler(BaseHTTPRequestHandler):
                     )
                 except Exception as exc:  # noqa: BLE001
                     sys.stdout.write(f"thumb failed {src_url}: {exc}\n")
-                    self._redirect(src_url, cache_control="public, max-age=3600")
+                    if static_thumb:
+                        self._stream_file(
+                            static_thumb,
+                            "image/webp",
+                            cache_control="public, max-age=604800, immutable",
+                        )
+                    else:
+                        self._redirect(src_url, cache_control="public, max-age=3600")
                 finally:
                     THUMB_SEM.release()
+                return
+            if static_thumb:
+                self._stream_file(
+                    static_thumb,
+                    "image/webp",
+                    cache_control="public, max-age=604800, immutable",
+                )
                 return
             self._redirect(src_url, cache_control="public, max-age=3600")
             return
@@ -1359,6 +1406,7 @@ class Handler(BaseHTTPRequestHandler):
         # Cache static assets on mobile; HTML stays short-lived
         is_binary_asset = (
             "/assets/" in str(file_path).replace("\\", "/")
+            or "/thumbs/" in str(file_path).replace("\\", "/")
             or file_path.suffix.lower()
             in {
                 ".jpg",

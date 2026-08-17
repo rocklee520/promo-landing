@@ -55,7 +55,7 @@
         .map(
           (p) => `
         <a class="search-card" href="${escapeAttr(postHref(p))}" target="${postTarget(p)}" rel="noopener noreferrer">
-          <div class="search-cover"><img src="${escapeAttr(coverUrl(p, 360))}" alt="" loading="lazy" decoding="async" /></div>
+          <div class="search-cover"><img src="${escapeAttr(coverUrl(p, 240))}" data-full="${escapeAttr(p.cover || "")}" alt="" loading="lazy" decoding="async" /></div>
           <div class="search-card-body">
             <h3>${titleWithPriceHtml(p)}</h3>
             <p>${escapeHtml(p.subtitle || p.summary || "")}</p>
@@ -67,6 +67,7 @@
         </a>`
         )
         .join("");
+      window.Promo.bindImgFallback(grid);
     })
     .catch((err) => {
       countEl.textContent = `加载失败：${err.message}`;
