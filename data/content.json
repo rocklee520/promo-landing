@@ -73,7 +73,7 @@
         "CocoPie"
       ],
       "series": "",
-      "views": 0,
+      "views": 1,
       "date": "2026-08-02",
       "featured": true,
       "hot": true,
@@ -121,7 +121,7 @@
         "/assets/xiaod/18.png",
         "/assets/xiaod/19.png"
       ],
-      "views": 5,
+      "views": 7,
       "purchaseRequired": false
     },
     {
@@ -163,7 +163,7 @@
         "/assets/yumengzi/18.jpg",
         "/assets/yumengzi/19.jpg"
       ],
-      "views": 1,
+      "views": 2,
       "purchaseRequired": false
     },
     {
@@ -720,7 +720,7 @@
         "/assets/sunheyi/17.jpg",
         "/assets/sunheyi/18.jpg"
       ],
-      "views": 2,
+      "views": 3,
       "purchaseRequired": false
     },
     {
