@@ -299,9 +299,23 @@ window.Promo = (() => {
 
     const nav = document.getElementById("mainNav");
     if (nav) {
-      // No series classification — top nav is home only (baseline-style keyword search).
-      const onHome = location.pathname === "/" || location.pathname.endsWith("/index.html");
-      nav.innerHTML = `<a class="nav-link ${onHome ? "active" : ""}" href="/">首页</a>`;
+      const seriesParam = new URLSearchParams(location.search).get("series") || "";
+      const rawNav = Array.isArray(data?.nav) ? data.nav : [];
+      const seriesTabs = rawNav
+        .map((s) => String(s || "").trim())
+        .filter((s) => s && s !== "全部" && /系列$/.test(s));
+      const onHome =
+        (location.pathname === "/" || location.pathname.endsWith("/index.html")) && !seriesParam;
+      const active = String(activeNav || seriesParam || (onHome ? "全部" : "")).trim();
+      const links = [
+        `<a class="nav-link ${active === "全部" || onHome ? "active" : ""}" href="/">首页</a>`,
+        ...seriesTabs.map((s) => {
+          const href = `/?series=${encodeURIComponent(s)}`;
+          const on = active === s || seriesParam === s;
+          return `<a class="nav-link ${on ? "active" : ""}" href="${href}">${escapeHtml(s)}</a>`;
+        }),
+      ];
+      nav.innerHTML = links.join("");
     }
   }
 

@@ -206,7 +206,7 @@
         .split(/\r?\n/)
         .map((s) => s.trim())
         .filter(Boolean),
-      series: "",
+      series: $("editSeries").value.trim(),
       tags,
       date: $("editDate").value || new Date().toISOString().slice(0, 10),
       views: Number($("editViews").value || 0),

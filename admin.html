@@ -72,7 +72,13 @@
           <label>发货链接（百度云，付费确认后才显示）<input id="editFulfillment" placeholder="https://pan.baidu.com/s/..." /></label>
           <label>图集（每行一个图片 URL）<textarea id="editGallery" placeholder="/assets/kiki/01.jpeg"></textarea></label>
           <label>搜索关键词 / 标签（逗号分隔）<input id="editTags" placeholder="合集,反差,网红,OnlyFans" /></label>
-          <input id="editSeries" type="hidden" value="" />
+          <label>
+            系列
+            <select id="editSeries">
+              <option value="">（无）</option>
+              <option value="网红系列">网红系列</option>
+            </select>
+          </label>
           <div class="row-2">
             <label>日期<input id="editDate" type="date" /></label>
             <label>浏览数<input id="editViews" type="number" min="0" value="0" /></label>

@@ -13,8 +13,11 @@
     renderSiteChrome,
   } = window.Promo;
 
+  const seriesParam = new URLSearchParams(location.search).get("series") || "";
+
   const state = {
     data: null,
+    series: seriesParam,
     rankMode: "hot",
     sortMode: "newest",
     slide: 0,
@@ -35,11 +38,13 @@
   bindSearchForm(document.getElementById("searchForm"));
 
   function posts() {
-    return window.Promo.publicPosts(state.data?.posts);
+    const all = window.Promo.publicPosts(state.data?.posts);
+    if (!state.series || state.series === "全部") return all;
+    return all.filter((p) => String(p.series || "").trim() === state.series);
   }
 
   function renderAll() {
-    renderSiteChrome(state.data, { activeNav: "全部" });
+    renderSiteChrome(state.data, { activeNav: state.series || "全部" });
     window.Promo.renderHotKeywords(state.data, els.hotKeywords);
     renderCarousel();
     renderRank();
@@ -159,7 +164,8 @@
 
   function renderPosts() {
     const list = filteredSortedPosts();
-    els.allTitle.textContent = `全部内容（${list.length}）`;
+    const label = state.series ? state.series : "全部内容";
+    els.allTitle.textContent = `${label}（${list.length}）`;
     if (!list.length) {
       els.postList.innerHTML = '<div class="empty">暂无内容</div>';
       return;

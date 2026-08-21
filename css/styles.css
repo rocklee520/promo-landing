@@ -569,29 +569,29 @@ select {
 .rank-list {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 16px;
+  gap: 14px;
 }
 
 .rank-card {
   display: flex;
   flex-direction: column;
-  background: var(--bg-elevated);
-  border-radius: 14px;
+  background: transparent;
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: var(--shadow);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: none;
+  transition: transform 0.2s ease;
   min-width: 0;
 }
 
 .rank-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 28px rgba(90, 70, 140, 0.12);
+  transform: translateY(-2px);
 }
 
 .rank-card-cover {
-  aspect-ratio: 16 / 10;
+  aspect-ratio: 3 / 4;
   background: #ebe6f5;
   overflow: hidden;
+  border-radius: 12px;
 }
 
 .rank-card-cover img {
@@ -601,24 +601,24 @@ select {
 }
 
 .rank-card-body {
-  padding: 12px 12px 14px;
+  padding: 10px 2px 4px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 6px;
   flex: 1;
 }
 
 .rank-card-body h4 {
   margin: 0;
-  font-size: 0.92rem;
+  font-size: 0.88rem;
   font-weight: 600;
-  line-height: 1.4;
+  line-height: 1.35;
   color: var(--ink);
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  min-height: 2.8em;
+  min-height: 0;
 }
 
 .rank-card-meta {
@@ -646,33 +646,32 @@ select {
 .post-list {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 16px;
+  gap: 14px;
 }
 
 .post-card {
   display: flex;
   flex-direction: column;
-  background: var(--bg-elevated);
+  background: transparent;
   border: 0;
-  border-radius: 14px;
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: var(--shadow);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: none;
+  transition: transform 0.2s ease;
   padding: 0;
   min-width: 0;
 }
 
 .post-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 28px rgba(90, 70, 140, 0.12);
+  transform: translateY(-2px);
 }
 
 .post-cover {
   position: relative;
   overflow: hidden;
-  border-radius: 0;
+  border-radius: 12px;
   background: #ebe6f5;
-  aspect-ratio: 16 / 10;
+  aspect-ratio: 3 / 4;
 }
 
 .post-cover img {
@@ -682,17 +681,17 @@ select {
 }
 
 .post-body {
-  padding: 12px 12px 14px;
+  padding: 10px 2px 4px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
   flex: 1;
 }
 
 .post-body h3 {
   margin: 0;
-  font-size: 0.95rem;
-  line-height: 1.4;
+  font-size: 0.9rem;
+  line-height: 1.35;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -712,23 +711,16 @@ select {
 }
 
 .post-summary {
-  margin: 0;
-  color: var(--muted);
-  line-height: 1.5;
-  font-size: 0.82rem;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  display: none;
 }
 
 .post-foot {
   display: flex;
   justify-content: space-between;
-  gap: 10px;
-  margin-top: auto;
+  gap: 8px;
+  margin-top: 2px;
   color: var(--muted);
-  font-size: 0.8rem;
+  font-size: 0.75rem;
 }
 
 .empty {
@@ -790,7 +782,7 @@ select {
   .rank-list,
   .post-list {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
+    gap: 10px;
   }
 
   .carousel {
@@ -817,7 +809,13 @@ select {
 @media (max-width: 420px) {
   .rank-list,
   .post-list {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .post-body h3,
+  .rank-card-body h4 {
+    font-size: 0.8rem;
   }
 }
 
@@ -1223,22 +1221,22 @@ select {
 .search-card {
   display: flex;
   flex-direction: column;
-  background: rgba(255, 255, 255, 0.82);
-  border: 1px solid rgba(200, 185, 230, 0.45);
-  border-radius: 14px;
+  background: transparent;
+  border: 0;
+  border-radius: 12px;
   overflow: hidden;
-  transition: 0.2s ease;
+  transition: transform 0.2s ease;
 }
 
 .search-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 28px rgba(90, 60, 140, 0.12);
+  transform: translateY(-2px);
 }
 
 .search-cover {
-  aspect-ratio: 16 / 10;
+  aspect-ratio: 3 / 4;
   background: #efe8f8;
   overflow: hidden;
+  border-radius: 12px;
 }
 
 .search-cover img {
@@ -1248,12 +1246,12 @@ select {
 }
 
 .search-card-body {
-  padding: 12px;
+  padding: 10px 2px 4px;
 }
 
 .search-card-body h3 {
-  margin: 0 0 6px;
-  font-size: 0.98rem;
+  margin: 0 0 4px;
+  font-size: 0.9rem;
   line-height: 1.35;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -1262,14 +1260,7 @@ select {
 }
 
 .search-card-body p {
-  margin: 0;
-  color: var(--muted);
-  font-size: 0.82rem;
-  line-height: 1.45;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  display: none;
 }
 
 .search-empty {
@@ -1295,6 +1286,6 @@ select {
 
 @media (max-width: 560px) {
   .search-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
