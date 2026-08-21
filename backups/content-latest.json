@@ -7,8 +7,7 @@
     "pay": {
       "wechatQr": "",
       "alipayQr": "",
-      "note": "付款时请在备注/说明里填写订单号，付完回到本页点「我已付款」。",
-      "pushPlusToken": ""
+      "note": "付款时请在备注/说明里填写订单号，付完回到本页点「我已付款」。"
     },
     "contentUpdatedAt": "2026-08-21T00:49:14Z",
     "hotKeywords": [
@@ -84,7 +83,8 @@
       "hidden": false,
       "price": "10",
       "size": "55.3G",
-      "updatedAt": "2026-08-21T00:49:14Z"
+      "updatedAt": "2026-08-21T00:49:14Z",
+      "purchaseRequired": false
     },
     {
       "id": "bushiwanzi-020",
@@ -135,7 +135,8 @@
       "hidden": false,
       "price": "8",
       "size": "19.2G",
-      "updatedAt": "2026-08-19T06:01:47Z"
+      "updatedAt": "2026-08-19T06:01:47Z",
+      "purchaseRequired": false
     },
     {
       "id": "mina-103",
@@ -178,7 +179,8 @@
       "hidden": false,
       "price": "10",
       "size": "81.2G",
-      "updatedAt": "2026-08-19T01:02:36Z"
+      "updatedAt": "2026-08-19T01:02:36Z",
+      "purchaseRequired": false
     },
     {
       "id": "baitaolulu-015",
@@ -227,7 +229,8 @@
       "hidden": false,
       "price": "8",
       "size": "11G",
-      "updatedAt": "2026-08-19T01:01:00Z"
+      "updatedAt": "2026-08-19T01:01:00Z",
+      "purchaseRequired": false
     },
     {
       "id": "cocopie-019",
@@ -270,7 +273,8 @@
       "hidden": false,
       "price": "7",
       "size": "8.97G",
-      "updatedAt": "2026-08-17T11:55:13Z"
+      "updatedAt": "2026-08-17T11:55:13Z",
+      "purchaseRequired": false
     },
     {
       "id": "xiaod-101",
@@ -310,7 +314,8 @@
         "/assets/xiaod/18.png",
         "/assets/xiaod/19.png"
       ],
-      "views": 0
+      "views": 0,
+      "purchaseRequired": false
     },
     {
       "id": "yumengzi-009",
@@ -351,7 +356,8 @@
         "/assets/yumengzi/18.jpg",
         "/assets/yumengzi/19.jpg"
       ],
-      "views": 0
+      "views": 0,
+      "purchaseRequired": false
     },
     {
       "id": "jiutiaonanwu-010",
@@ -391,7 +397,8 @@
         "/assets/jiutiaonanwu/18.gif",
         "/assets/jiutiaonanwu/19.gif"
       ],
-      "views": 0
+      "views": 0,
+      "purchaseRequired": false
     },
     {
       "id": "shishi-223",
@@ -422,7 +429,8 @@
         "/assets/shishi/10.jpg",
         "/assets/shishi/11.jpg"
       ],
-      "views": 0
+      "views": 0,
+      "purchaseRequired": false
     },
     {
       "id": "yuumeilyn-025",
@@ -458,7 +466,8 @@
         "/assets/yuumeilyn/14.webp",
         "/assets/yuumeilyn/15.webp"
       ],
-      "views": 0
+      "views": 0,
+      "purchaseRequired": false
     },
     {
       "id": "sudaji-huwai-160g",
@@ -480,7 +489,8 @@
         "/assets/sudaji-huwai-160g/03.jpg",
         "/assets/sudaji-huwai-160g/04.jpg"
       ],
-      "views": 1
+      "views": 1,
+      "purchaseRequired": false
     },
     {
       "id": "beautyleg-dacidu-10g",
@@ -511,7 +521,8 @@
         "/assets/beautyleg-dacidu-10g/13.jpg",
         "/assets/beautyleg-dacidu-10g/14.jpg"
       ],
-      "views": 1
+      "views": 1,
+      "purchaseRequired": false
     },
     {
       "id": "taonaomu-xiangnai-42g",
@@ -532,7 +543,8 @@
       "gallery": [
         "/assets/taonaomu-xiangnai-42g/01.jpg"
       ],
-      "views": 0
+      "views": 0,
+      "purchaseRequired": false
     },
     {
       "id": "d-xiansheng-c-xiaojie-162g",
@@ -553,7 +565,8 @@
         "/assets/d-xiansheng-c-xiaojie-162g/02.jpg",
         "/assets/d-xiansheng-c-xiaojie-162g/03.jpg"
       ],
-      "views": 1
+      "views": 1,
+      "purchaseRequired": false
     },
     {
       "id": "ximengyao-005",
@@ -587,7 +600,8 @@
         "/assets/ximengyao/13.webp",
         "/assets/ximengyao/14.jpg"
       ],
-      "views": 0
+      "views": 0,
+      "purchaseRequired": false
     },
     {
       "id": "anzhuo-shenqi-006",
@@ -615,7 +629,8 @@
         "/assets/anzhuo-shenqi-6/08.jpg",
         "/assets/anzhuo-shenqi-6/09.jpg"
       ],
-      "views": 2
+      "views": 2,
+      "purchaseRequired": false
     },
     {
       "id": "dachi-chezhan-008",
@@ -642,7 +657,8 @@
         "/assets/dachi-chezhan-8/06.jpg",
         "/assets/dachi-chezhan-8/07.jpg"
       ],
-      "views": 1
+      "views": 1,
+      "purchaseRequired": false
     },
     {
       "id": "sweetgirl120g-033",
@@ -664,7 +680,8 @@
         "/assets/sweetgirl120g-33/02.jpg",
         "/assets/sweetgirl120g-33/03.jpg"
       ],
-      "views": 2
+      "views": 2,
+      "purchaseRequired": false
     },
     {
       "id": "wushe-007",
@@ -693,7 +710,8 @@
         "/assets/wushe-7/09.jpg",
         "/assets/wushe-7/10.jpg"
       ],
-      "views": 0
+      "views": 0,
+      "purchaseRequired": false
     },
     {
       "id": "madou-001",
@@ -716,7 +734,8 @@
         "/assets/madou-1/03.jpg",
         "/assets/madou-1/04.jpg"
       ],
-      "views": 1
+      "views": 1,
+      "purchaseRequired": false
     },
     {
       "id": "guoge-019",
@@ -736,7 +755,8 @@
       "gallery": [
         "/assets/guoge/01.jpg"
       ],
-      "views": 5
+      "views": 5,
+      "purchaseRequired": false
     },
     {
       "id": "yunatamago-018",
@@ -756,7 +776,8 @@
       "gallery": [
         "/assets/yunatamago/01.jpg"
       ],
-      "views": 1
+      "views": 1,
+      "purchaseRequired": false
     },
     {
       "id": "yum707-038",
@@ -803,7 +824,8 @@
         "/assets/yum707/26.jpg",
         "/assets/yum707/27.jpg"
       ],
-      "views": 1
+      "views": 1,
+      "purchaseRequired": false
     },
     {
       "id": "pupuwaifu-007",
@@ -852,7 +874,8 @@
         "/assets/pupuwaifu/27.jpg",
         "/assets/pupuwaifu/28.jpg"
       ],
-      "views": 2
+      "views": 2,
+      "purchaseRequired": false
     },
     {
       "id": "sunheyi-017",
@@ -890,7 +913,8 @@
         "/assets/sunheyi/17.jpg",
         "/assets/sunheyi/18.jpg"
       ],
-      "views": 2
+      "views": 2,
+      "purchaseRequired": false
     },
     {
       "id": "fenjie-ks",
@@ -915,7 +939,8 @@
         "/assets/fenjie/04.jpg",
         "/assets/fenjie/05.jpg"
       ],
-      "views": 0
+      "views": 0,
+      "purchaseRequired": false
     },
     {
       "id": "yuyuanya-126",
@@ -950,7 +975,8 @@
         "/assets/yuyuanya/16.jpg",
         "/assets/yuyuanya/17.jpg"
       ],
-      "views": 0
+      "views": 0,
+      "purchaseRequired": false
     },
     {
       "id": "lilizi-012",
@@ -977,7 +1003,8 @@
         "/assets/lilizi/07.jpg",
         "/assets/lilizi/08.jpg"
       ],
-      "views": 1
+      "views": 1,
+      "purchaseRequired": false
     },
     {
       "id": "taipeinana-008",
@@ -1011,7 +1038,8 @@
         "/assets/taipeinana/13.webp",
         "/assets/taipeinana/14.webp"
       ],
-      "views": 1
+      "views": 1,
+      "purchaseRequired": false
     },
     {
       "id": "fc2-gaoyanzhi-dg1",
@@ -1033,7 +1061,8 @@
         "/assets/fc2-gaoyanzhi/02.jpg",
         "/assets/fc2-gaoyanzhi/03.jpg"
       ],
-      "views": 6
+      "views": 6,
+      "purchaseRequired": false
     },
     {
       "id": "hangse-jg5",
@@ -1056,7 +1085,8 @@
         "/assets/hangse/03.jpg",
         "/assets/hangse/04.jpg"
       ],
-      "views": 9
+      "views": 9,
+      "purchaseRequired": false
     },
     {
       "id": "pansihuayuan-jg3",
@@ -1079,7 +1109,8 @@
         "/assets/pansihuayuan/03.jpg",
         "/assets/pansihuayuan/04.jpg"
       ],
-      "views": 3
+      "views": 3,
+      "purchaseRequired": false
     },
     {
       "id": "suchang-wh4",
@@ -1105,7 +1136,8 @@
         "/assets/suchang/06.jpg",
         "/assets/suchang/07.jpg"
       ],
-      "views": 6
+      "views": 6,
+      "purchaseRequired": false
     },
     {
       "id": "kunkungou-001",
@@ -1135,7 +1167,8 @@
         "/assets/kunkungou/09.webp",
         "/assets/kunkungou/10.jpg"
       ],
-      "views": 11
+      "views": 11,
+      "purchaseRequired": false
     },
     {
       "id": "anaimiya-002",
@@ -1173,7 +1206,8 @@
         "/assets/anaimiya/17.webp",
         "/assets/anaimiya/18.jpg"
       ],
-      "views": 4
+      "views": 4,
+      "purchaseRequired": false
     },
     {
       "id": "asia-lynn-003",
@@ -1209,7 +1243,8 @@
         "/assets/asia-lynn/15.jpg",
         "/assets/asia-lynn/16.jpg"
       ],
-      "views": 5
+      "views": 5,
+      "purchaseRequired": false
     },
     {
       "id": "xinyouli-004",
@@ -1246,7 +1281,8 @@
         "/assets/xinyouli/17.jpeg",
         "/assets/xinyouli/18.jpeg"
       ],
-      "views": 13
+      "views": 13,
+      "purchaseRequired": false
     },
     {
       "id": "tuzaibaby-102",
@@ -1276,7 +1312,8 @@
         "/assets/tuzaibaby/10.jpeg",
         "/assets/tuzaibaby/11.jpeg"
       ],
-      "views": 14
+      "views": 14,
+      "purchaseRequired": false
     },
     {
       "id": "kiki-098",
@@ -1313,7 +1350,8 @@
         "/assets/kiki/17.png",
         "/assets/kiki/18.png"
       ],
-      "views": 19
+      "views": 19,
+      "purchaseRequired": false
     },
     {
       "id": "xiyu-wenquan-tp1",
@@ -1335,7 +1373,8 @@
         "/assets/xiyu-wenquan/02.jpg",
         "/assets/xiyu-wenquan/03.jpg"
       ],
-      "views": 1
+      "views": 1,
+      "purchaseRequired": false
     },
     {
       "id": "kittyxkum-031",
@@ -1384,7 +1423,8 @@
         "/assets/kittyxkum/28.jpg",
         "/assets/kittyxkum/29.jpg"
       ],
-      "views": 1
+      "views": 1,
+      "purchaseRequired": false
     },
     {
       "id": "litu-011",
@@ -1406,7 +1446,8 @@
         "/assets/litu-11/02.jpg",
         "/assets/litu-11/03.jpg"
       ],
-      "views": 0
+      "views": 0,
+      "purchaseRequired": false
     },
     {
       "id": "niannian-022",
@@ -1429,7 +1470,8 @@
         "/assets/niannian-22/03.jpg",
         "/assets/niannian-22/04.jpg"
       ],
-      "views": 0
+      "views": 0,
+      "purchaseRequired": false
     },
     {
       "id": "nina-100g-021",
@@ -1452,7 +1494,8 @@
         "/assets/nina-100g-21/03.jpg",
         "/assets/nina-100g-21/04.jpg"
       ],
-      "views": 0
+      "views": 0,
+      "purchaseRequired": false
     },
     {
       "id": "xiayuhe-020",
@@ -1477,7 +1520,8 @@
         "/assets/xiayuhe-20/05.jpg",
         "/assets/xiayuhe-20/06.jpg"
       ],
-      "views": 2
+      "views": 2,
+      "purchaseRequired": false
     },
     {
       "id": "shaofu-baizhuo-002",
@@ -1499,7 +1543,8 @@
         "/assets/shaofu-baizhuo-2/02.jpg",
         "/assets/shaofu-baizhuo-2/03.jpg"
       ],
-      "views": 0
+      "views": 0,
+      "purchaseRequired": false
     },
     {
       "id": "xiongmao-ban-015",
@@ -1521,7 +1566,8 @@
         "/assets/xiongmao-ban-15/02.jpg",
         "/assets/xiongmao-ban-15/03.jpg"
       ],
-      "views": 2
+      "views": 2,
+      "purchaseRequired": false
     },
     {
       "id": "xiongmao-zhanqi-001",
@@ -1543,7 +1589,8 @@
         "/assets/xiongmao-zhanqi-1/02.jpg",
         "/assets/xiongmao-zhanqi-1/03.jpg"
       ],
-      "views": 1
+      "views": 1,
+      "purchaseRequired": false
     },
     {
       "id": "riyue-julebu-013",
@@ -1565,7 +1612,8 @@
         "/assets/riyue-julebu-13/02.jpg",
         "/assets/riyue-julebu-13/03.jpg"
       ],
-      "views": 1
+      "views": 1,
+      "purchaseRequired": false
     },
     {
       "id": "mingbu-wuma-009",
@@ -1592,7 +1640,8 @@
         "/assets/mingbu-wuma-9/06.jpg",
         "/assets/mingbu-wuma-9/07.jpg"
       ],
-      "views": 5
+      "views": 5,
+      "purchaseRequired": false
     },
     {
       "id": "douyin-juqing-024",
@@ -1614,7 +1663,8 @@
         "/assets/douyin-juqing-24/02.jpg",
         "/assets/douyin-juqing-24/03.jpg"
       ],
-      "views": 0
+      "views": 0,
+      "purchaseRequired": false
     },
     {
       "id": "penshui-001",
@@ -1636,7 +1686,8 @@
         "/assets/penshui-1/02.jpg",
         "/assets/penshui-1/03.jpg"
       ],
-      "views": 0
+      "views": 0,
+      "purchaseRequired": false
     },
     {
       "id": "luowu-003",
@@ -1655,7 +1706,8 @@
       "gallery": [
         "/assets/luowu-3/01.jpg"
       ],
-      "views": 1
+      "views": 1,
+      "purchaseRequired": false
     }
   ],
   "updatedAt": "2026-08-09T15:07:01Z"
