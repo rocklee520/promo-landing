@@ -28,12 +28,31 @@ window.Promo = (() => {
     return String(b?.date || "").localeCompare(String(a?.date || ""));
   }
 
+  /** Bucket width for prebuilt list thumbs. */
+  function listThumbBucket(width) {
+    const w = Number(width) || 480;
+    if (w <= 360) return 360;
+    if (w <= 480) return 480;
+    return 720;
+  }
+
+  function coverAsset(p) {
+    const cover = String(p?.cover || "").trim();
+    const gallery = Array.isArray(p?.gallery) ? p.gallery : [];
+    const animated = gallery.find((u) =>
+      /\.(gif)(?:$|\?)/i.test(String(u || "")) ||
+      /\/cover\.(gif|webp)(?:$|\?)/i.test(String(u || ""))
+    );
+    const coverIsAnimated =
+      /\.gif(?:$|\?)/i.test(cover) || /\/cover\.(gif|webp)(?:$|\?)/i.test(cover);
+    return (!coverIsAnimated && animated ? animated : cover) || cover;
+  }
+
   /** Prefer prebuilt static list thumbs (fast). Fall back to /img, then original. */
-  function staticListThumb(src, width = 360) {
+  function staticListThumb(src, width = 480) {
     const s = String(src || "").trim();
     if (!s.startsWith("/assets/")) return "";
-    const w = Number(width) || 360;
-    const bucket = w <= 240 ? 240 : 360;
+    const bucket = listThumbBucket(width);
     return `/thumbs/list/${bucket}${s}.webp`;
   }
 
@@ -45,30 +64,42 @@ window.Promo = (() => {
     // GIF / dedicated animated cover files must not be freeze-framed by /img on detail
     if (/\.gif(?:$|\?)/i.test(s) || /\/cover\.(gif|webp)(?:$|\?)/i.test(s)) return s;
     const w = Number(width) || 480;
-    const pre = staticListThumb(s, w <= 360 ? w : 360);
-    if (pre && w <= 360) return pre;
+    const pre = staticListThumb(s, w);
+    if (pre && w <= 720) return pre;
     return `/img?u=${encodeURIComponent(s)}&w=${w}`;
   }
 
-  /** List/card cover: always prefer tiny static WebP (even for GIF covers). */
-  function coverUrl(p, width = 360) {
+  /** List/card cover: prefer sharper static WebP (480/720). */
+  function coverUrl(p, width = 480) {
+    const src = coverAsset(p);
     const cover = String(p?.cover || "").trim();
-    const gallery = Array.isArray(p?.gallery) ? p.gallery : [];
-    const animated = gallery.find((u) =>
-      /\.(gif)(?:$|\?)/i.test(String(u || "")) ||
-      /\/cover\.(gif|webp)(?:$|\?)/i.test(String(u || ""))
-    );
-    const coverIsAnimated =
-      /\.gif(?:$|\?)/i.test(cover) || /\/cover\.(gif|webp)(?:$|\?)/i.test(cover);
-    const src = (!coverIsAnimated && animated ? animated : cover) || cover;
-    const w = Number(width) || 360;
+    const w = Number(width) || 480;
     const pre = staticListThumb(src, w);
     if (pre) return pre;
-    // Animated full GIF only as last resort for list (slow) — still try /img for stills
+    const coverIsAnimated =
+      /\.gif(?:$|\?)/i.test(cover) || /\/cover\.(gif|webp)(?:$|\?)/i.test(cover);
     if (coverIsAnimated || /\.gif(?:$|\?)/i.test(String(src || ""))) {
       return staticListThumb(cover, w) || cover;
     }
     return thumbUrl(src, w);
+  }
+
+  /** img tag for list cards with retina srcset. */
+  function coverImgHtml(p, { width = 480, alt = "", loading = "lazy", fetchpriority = "" } = {}) {
+    const src = coverAsset(p);
+    const primary = coverUrl(p, width);
+    const srcset = [360, 480, 720]
+      .map((w) => {
+        const u = staticListThumb(src, w);
+        return u ? `${escapeAttr(u)} ${w}w` : null;
+      })
+      .filter(Boolean)
+      .join(", ");
+    const sizes = "(max-width: 720px) 50vw, 25vw";
+    const srcsetAttr = srcset ? ` srcset="${srcset}" sizes="${sizes}"` : "";
+    const fp = fetchpriority ? ` fetchpriority="${fetchpriority}"` : "";
+    const load = loading ? ` loading="${loading}"` : "";
+    return `<img src="${escapeAttr(primary)}"${srcsetAttr}${fp}${load} data-full="${escapeAttr(p?.cover || src)}" alt="${escapeAttr(alt)}" decoding="async" />`;
   }
 
   /** img onerror: static thumb -> /img -> original asset */
@@ -87,7 +118,7 @@ window.Promo = (() => {
           const m = src.match(/\/thumbs\/list\/\d+(\/assets\/.+?)\.webp(?:$|\?)/i);
           const asset = full || (m ? m[1] : "");
           if (asset) {
-            img.src = `/img?u=${encodeURIComponent(asset)}&w=360`;
+            img.src = `/img?u=${encodeURIComponent(asset)}&w=720`;
             return;
           }
         }
@@ -325,6 +356,7 @@ window.Promo = (() => {
     formatPrice,
     thumbUrl,
     coverUrl,
+    coverImgHtml,
     bindImgFallback,
     staticListThumb,
     postTime,

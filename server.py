@@ -30,7 +30,7 @@ ORDERS_PATH = DATA_DIR / "orders.json"
 THUMBS_DIR = DATA_DIR / "thumbs"
 HOST = os.environ.get("HOST", "0.0.0.0")
 PORT = int(os.environ.get("PORT", "8787"))
-THUMB_WIDTHS = {240, 360, 480}
+THUMB_WIDTHS = {360, 480, 720}
 # Free Render instances are ~512MB; avoid loading many full images at once.
 THUMB_MAX_SRC_BYTES = int(os.environ.get("THUMB_MAX_SRC_BYTES", str(600_000)))
 THUMB_SEM = threading.Semaphore(int(os.environ.get("THUMB_CONCURRENCY", "1")))
@@ -121,12 +121,21 @@ def resolve_asset_path(url_path: str) -> Path | None:
     return candidate
 
 
+def static_list_thumb_bucket(width: int) -> int:
+    w = int(width or 480)
+    if w <= 360:
+        return 360
+    if w <= 480:
+        return 480
+    return 720
+
+
 def static_list_thumb_path(src_url: str, width: int) -> Path | None:
-    """Prebuilt list thumb: /thumbs/list/{240|360}/assets/....webp"""
+    """Prebuilt list thumb: /thumbs/list/{360|480|720}/assets/....webp"""
     raw = str(src_url or "").strip()
     if not raw.startswith("/assets/"):
         return None
-    bucket = 240 if int(width or 360) <= 240 else 360
+    bucket = static_list_thumb_bucket(width)
     rel = raw.lstrip("/")
     candidate = (ROOT / "thumbs" / "list" / str(bucket) / f"{rel}.webp").resolve()
     root = (ROOT / "thumbs" / "list").resolve()
@@ -1262,8 +1271,8 @@ class Handler(BaseHTTPRequestHandler):
                 self._json(404, {"error": "image not found"})
                 return
             # Prefer prebuilt static list thumbs (no Pillow, survives redeploy)
-            static_thumb = static_list_thumb_path(src_url, width if width <= 360 else 360)
-            if static_thumb and width <= 360:
+            static_thumb = static_list_thumb_path(src_url, width)
+            if static_thumb and width <= 720:
                 self._stream_file(
                     static_thumb,
                     "image/webp",

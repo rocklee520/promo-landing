@@ -11,7 +11,7 @@ from PIL import Image, ImageOps, ImageSequence
 ROOT = Path(r"F:\promo-landing")
 CONTENT = ROOT / "data" / "content.json"
 OUT = ROOT / "thumbs" / "list"
-WIDTHS = (240, 360)
+WIDTHS = (360, 480, 720)
 
 
 def asset_path(url: str) -> Path | None:
@@ -52,7 +52,7 @@ def make_thumb(src: Path, width: int) -> bytes:
         import io
 
         buf = io.BytesIO()
-        im.save(buf, format="WEBP", quality=72, method=4)
+        im.save(buf, format="WEBP", quality=85, method=4)
         return buf.getvalue()
 
 
