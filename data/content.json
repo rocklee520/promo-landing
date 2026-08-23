@@ -7,8 +7,7 @@
     "pay": {
       "wechatQr": "",
       "alipayQr": "",
-      "note": "付款时请在备注/说明里填写订单号，付完回到本页点「我已付款」。",
-      "pushPlusToken": ""
+      "note": "付款时请在备注/说明里填写订单号，付完回到本页点「我已付款」。"
     },
     "contentUpdatedAt": "2026-08-23T12:14:36Z",
     "hotKeywords": [
@@ -78,7 +77,8 @@
       "hidden": false,
       "price": "10",
       "size": "46.2G",
-      "updatedAt": "2026-08-23T12:14:36Z"
+      "updatedAt": "2026-08-23T12:14:36Z",
+      "purchaseRequired": false
     },
     {
       "id": "taotao7481-040",
@@ -114,7 +114,8 @@
       "hidden": false,
       "price": "8",
       "size": "22.3G",
-      "updatedAt": "2026-08-23T12:12:40Z"
+      "updatedAt": "2026-08-23T12:12:40Z",
+      "purchaseRequired": false
     },
     {
       "id": "gaoqiaoyoumei-039",
@@ -144,7 +145,8 @@
       "hidden": false,
       "price": "6",
       "size": "7.1G",
-      "updatedAt": "2026-08-23T04:18:41Z"
+      "updatedAt": "2026-08-23T04:18:41Z",
+      "purchaseRequired": false
     },
     {
       "id": "kimoji-036",
@@ -174,7 +176,8 @@
       "hidden": false,
       "price": "8",
       "size": "30.5G",
-      "updatedAt": "2026-08-23T04:13:52Z"
+      "updatedAt": "2026-08-23T04:13:52Z",
+      "purchaseRequired": false
     },
     {
       "id": "miyoki-035",
