@@ -658,7 +658,7 @@
         "/assets/shishi/10.jpg",
         "/assets/shishi/11.jpg"
       ],
-      "views": 4,
+      "views": 5,
       "purchaseRequired": false
     },
     {
@@ -1435,7 +1435,7 @@
         "/assets/anaimiya/17.webp",
         "/assets/anaimiya/18.jpg"
       ],
-      "views": 6,
+      "views": 7,
       "purchaseRequired": false
     },
     {
@@ -1818,7 +1818,7 @@
         "/assets/xiongmao-zhanqi-1/02.jpg",
         "/assets/xiongmao-zhanqi-1/03.jpg"
       ],
-      "views": 1,
+      "views": 2,
       "purchaseRequired": false
     },
     {
@@ -1841,7 +1841,7 @@
         "/assets/riyue-julebu-13/02.jpg",
         "/assets/riyue-julebu-13/03.jpg"
       ],
-      "views": 3,
+      "views": 4,
       "purchaseRequired": false
     },
     {
@@ -1935,7 +1935,7 @@
       "gallery": [
         "/assets/luowu-3/01.jpg"
       ],
-      "views": 3,
+      "views": 4,
       "purchaseRequired": false
     }
   ],
